@@ -120,7 +120,6 @@ function entity_browser_page_entity($entity_type, $entity_info) {
  * Entity bundles.
  */
 function entity_browser_page_entity_bundles($entity_type, $entity_info) {
-  drupal_set_title(t('Bundles'));
   entity_browser_rebuild_breadcrumb();
 
   $header = array(
@@ -171,7 +170,6 @@ function entity_browser_page_entity_bundle($bundle_type, $bundle_info) {
  * Entity view modes.
  */
 function entity_browser_page_entity_view_modes($entity) {
-  drupal_set_title(t('View modes'));
   entity_browser_rebuild_breadcrumb();
 
   $header = array(
