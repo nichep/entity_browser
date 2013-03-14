@@ -6,7 +6,7 @@
 function entity_browser_menu() {
   $items = array();
 
-  $items['admin/structure/entities'] = array(
+  $items['admin/reports/entities'] = array(
     'title' => 'Entities',
     'description' => 'View and manage defined entities.',
     'page callback' => 'entity_browser_page_entities',
@@ -14,14 +14,14 @@ function entity_browser_menu() {
   );
 
   foreach (entity_get_info() as $entity_type => $entity_info) {
-    $items['admin/structure/entities/' . $entity_type] = array(
+    $items['admin/reports/entities/' . $entity_type] = array(
       'title' => '!label',
       'title arguments' => array('!label' => $entity_info['label']),
       'page callback' => 'entity_browser_page_entity',
       'page arguments' => array($entity_type, $entity_info),
       'access arguments' => array('access content'),
     );
-    $items['admin/structure/entities/' . $entity_type . '/properties'] = array(
+    $items['admin/reports/entities/' . $entity_type . '/properties'] = array(
       'title' => t('Properties'),
       'page callback' => 'entity_browser_page_entity',
       'page arguments' => array($entity_type, $entity_info),
@@ -30,7 +30,7 @@ function entity_browser_menu() {
       'weight' => 0,
     );
 
-    $items['admin/structure/entities/' . $entity_type . '/bundles'] = array(
+    $items['admin/reports/entities/' . $entity_type . '/bundles'] = array(
       'title' => 'Bundles',
       'page callback' => 'entity_browser_page_entity_bundles',
       'page arguments' => array($entity_type, $entity_info),
@@ -39,7 +39,7 @@ function entity_browser_menu() {
       'weight' => 10,
     );
     foreach ($entity_info['bundles'] as $bundle_type => $bundle_info) {
-      $items['admin/structure/entities/' . $entity_type . '/bundles/' . $bundle_type] = array(
+      $items['admin/reports/entities/' . $entity_type . '/bundles/' . $bundle_type] = array(
         'title' => $bundle_info['label'],
         'page callback' => 'entity_browser_page_entity_bundle',
         'page arguments' => array($bundle_type, $bundle_info),
@@ -48,7 +48,7 @@ function entity_browser_menu() {
       );
     }
 
-    $items['admin/structure/entities/' . $entity_type . '/view-modes'] = array(
+    $items['admin/reports/entities/' . $entity_type . '/view-modes'] = array(
       'title' => 'View modes',
       'page callback' => 'entity_browser_page_entity_view_modes',
       'page arguments' => array($entity_info),
