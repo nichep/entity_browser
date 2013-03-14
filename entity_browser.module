@@ -90,6 +90,7 @@ function entity_browser_menu() {
 function entity_browser_page_entities() {
   $header = array(
     'label' => t('Label'),
+    'machine' => t('Machine name'),
     'fieldable' => t('Fieldable'),
     'bundles' => t('Bundles'),
     'view modes' => t('View modes'),
@@ -105,6 +106,7 @@ function entity_browser_page_entities() {
     );
     $rows[] = array(
       'label' => l($info['label'], current_path() . '/' . $entity_type),
+      'machine' => $entity_type,
       'fieldable' => $info['fieldable'] ? t('yes') : t('no'),
       'bundles' => array(
         'data' => count($info['bundles']),
@@ -147,6 +149,7 @@ function entity_browser_page_entity_bundles($entity_type, $entity_info) {
 
   $header = array(
     'label' => t('Label'),
+    'machine' => t('Machine name'),
     'links' => t('Operations'),
   );
 
@@ -162,6 +165,7 @@ function entity_browser_page_entity_bundles($entity_type, $entity_info) {
     }
     $rows[] = array(
       'label' => l($bundle_info['label'], current_path() . '/' . $bundle_type),
+      'machine' => $bundle_type,
       'links' => theme('links', array(
         'links' => $links,
         'attributes' => array('class' => array('links', 'inline')),
@@ -197,14 +201,16 @@ function entity_browser_page_entity_view_modes($entity) {
 
   $header = array(
     'label' => t('Label'),
+    'machine' => t('Machine name'),
     'custom' => t('Custom settings'),
   );
 
   $rows = array();
-  foreach ($entity['view modes'] as $view_mode => $info) {
+  foreach ($entity['view modes'] as $view_mode_type => $view_mode_info) {
     $rows[] = array(
-      'label' => $info['label'],
-      'custom' => $info['custom settings'] ? l(t('yes'), str_replace('view-modes', 'bundles', current_path())) : t('no'),
+      'label' => $view_mode_info['label'],
+      'machine' => $view_mode_type,
+      'custom' => $view_mode_info['custom settings'] ? l(t('yes'), str_replace('view-modes', 'bundles', current_path())) : t('no'),
     );
   }
 
