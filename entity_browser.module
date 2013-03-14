@@ -1,6 +1,18 @@
 <?php
 
 /**
+ * Implements hook_help().
+ */
+function entity_browser_help($path, $arg) {
+  switch ($path) {
+    case 'admin/reports/entities':
+      return '<p>' . t('This list shows all entities defined on the website. You can use provided links to drill down to their details.') . '</p>';
+    case 'admin/help#entity_browser':
+      return '<p>' . t('The entity browser module provides a set of pages listing all entities defined on the site and allowing to drill down to their details.') . '</p>';
+  }
+}
+
+/**
  * Implements hook_permission().
  */
 function entity_browser_permission() {
