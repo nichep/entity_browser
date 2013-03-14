@@ -1,6 +1,17 @@
 <?php
 
 /**
+ * Implements hook_permission().
+ */
+function entity_browser_permission() {
+  return array(
+    'access entity browser' => array(
+      'title' => t('Access entity browser'),
+    ),
+  );
+}
+
+/**
  * Implements hook_menu().
  */
 function entity_browser_menu() {
@@ -10,7 +21,7 @@ function entity_browser_menu() {
     'title' => 'Entities',
     'description' => 'View and manage defined entities.',
     'page callback' => 'entity_browser_page_entities',
-    'access arguments' => array('access content'),
+    'access arguments' => array('access entity browser'),
   );
 
   foreach (entity_get_info() as $entity_type => $entity_info) {
@@ -19,13 +30,13 @@ function entity_browser_menu() {
       'title arguments' => array('!label' => $entity_info['label']),
       'page callback' => 'entity_browser_page_entity',
       'page arguments' => array($entity_type, $entity_info),
-      'access arguments' => array('access content'),
+      'access arguments' => array('access entity browser'),
     );
     $items['admin/reports/entities/' . $entity_type . '/properties'] = array(
       'title' => t('Properties'),
       'page callback' => 'entity_browser_page_entity',
       'page arguments' => array($entity_type, $entity_info),
-      'access arguments' => array('access content'),
+      'access arguments' => array('access entity browser'),
       'type' => MENU_DEFAULT_LOCAL_TASK,
       'weight' => 0,
     );
@@ -34,7 +45,7 @@ function entity_browser_menu() {
       'title' => 'Bundles',
       'page callback' => 'entity_browser_page_entity_bundles',
       'page arguments' => array($entity_type, $entity_info),
-      'access arguments' => array('access content'),
+      'access arguments' => array('access entity browser'),
       'type' => MENU_LOCAL_TASK,
       'weight' => 10,
     );
@@ -43,7 +54,7 @@ function entity_browser_menu() {
         'title' => $bundle_info['label'],
         'page callback' => 'entity_browser_page_entity_bundle',
         'page arguments' => array($bundle_type, $bundle_info),
-        'access arguments' => array('access content'),
+        'access arguments' => array('access entity browser'),
         'type' => MENU_LOCAL_TASK,
       );
     }
@@ -52,7 +63,7 @@ function entity_browser_menu() {
       'title' => 'View modes',
       'page callback' => 'entity_browser_page_entity_view_modes',
       'page arguments' => array($entity_info),
-      'access arguments' => array('access content'),
+      'access arguments' => array('access entity browser'),
       'type' => MENU_LOCAL_TASK,
       'weight' => 20,
     );
