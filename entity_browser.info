@@ -2,3 +2,4 @@ name = Entity Browser
 description = Displays all entities defined on the site and allows to drill into their details.
 core = 7.x
 dependencies[] = entity
+configure = admin/reports/entities
