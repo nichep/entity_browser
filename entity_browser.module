@@ -245,9 +245,15 @@ function entity_browser_key_value_table($array, $args = array()) {
 
   $rows = array();
   foreach ($array as $key => $value) {
+    if (is_array($value)) {
+      $value = l(t('array(!count)', array('!count' => count($value))), current_path() . '/' . $key);
+    }
+    elseif (is_bool($value)) {
+      $value = $value ? t('TRUE') : t('FALSE');
+    }
     $rows[] = array(
       'key' => $key,
-      'value' => is_array($value) ? l(t('array(!count)', array('!count' => count($value))), current_path() . '/' . $key) : $value,
+      'value' => $value,
     );
   }
 
