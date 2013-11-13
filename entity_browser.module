@@ -61,14 +61,16 @@ function entity_browser_menu() {
       'type' => MENU_LOCAL_TASK,
       'weight' => 10,
     );
-    foreach ($entity_info['bundles'] as $bundle_type => $bundle_info) {
-      $items['admin/reports/entities/' . $entity_type . '/bundles/' . $bundle_type] = array(
-        'title' => $bundle_info['label'],
-        'page callback' => 'entity_browser_page_entity_bundle',
-        'page arguments' => array($bundle_type, $bundle_info),
-        'access arguments' => array('access entity browser'),
-        'type' => MENU_LOCAL_TASK,
-      );
+    if (count($entity_info['bundles'])) {
+      foreach ($entity_info['bundles'] as $bundle_type => $bundle_info) {
+        $items['admin/reports/entities/' . $entity_type . '/bundles/' . $bundle_type] = array(
+          'title' => $bundle_info['label'],
+          'page callback' => 'entity_browser_page_entity_bundle',
+          'page arguments' => array($bundle_type, $bundle_info),
+          'access arguments' => array('access entity browser'),
+          'type' => MENU_LOCAL_TASK,
+        );
+      }
     }
 
     $items['admin/reports/entities/' . $entity_type . '/view-modes'] = array(
