@@ -65,7 +65,7 @@
 
               // Ensure to use input (checkbox) field from entity browser
               // column dedicated for selection checkbox.
-              var $input = $row.find('.views-field-entity-browser-select input.form-checkbox, .views-field-entity-browser-select input.form-radio');
+              var $input = $row.find('.views-field-entity-browser-select input.form-checkbox');
 
               // Get selection display element and trigger adding of entity
               // over ajax request.

@@ -49,7 +49,6 @@ class EntityBrowserViewsWidgetTest extends EntityBrowserJavascriptTestBase {
 
     // Visit a test entity browser page that defaults to using a View widget.
     $this->drupalGet('/entity-browser/iframe/test_entity_browser_file');
-    $this->saveHtmlOutput();
     $field = 'entity_browser_select[file:' . $file->id() . ']';
 
     // Test exposed filters.
