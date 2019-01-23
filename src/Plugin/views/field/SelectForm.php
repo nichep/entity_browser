@@ -2,7 +2,6 @@
 
 namespace Drupal\entity_browser\Plugin\views\field;
 
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\Plugin\views\style\Table;
 use Drupal\views\ResultRow;
@@ -14,32 +13,6 @@ use Drupal\views\Render\ViewsRenderPipelineMarkup;
  * @ViewsField("entity_browser_select")
  */
 class SelectForm extends FieldPluginBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function defineOptions() {
-    $options = parent::defineOptions();
-    $options['use_field_cardinality'] = [
-      'default' => TRUE,
-    ];
-
-    return $options;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
-    parent::buildOptionsForm($form, $form_state);
-
-    $form['use_field_cardinality'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Use field cardinality'),
-      '#default_value' => $this->options['use_field_cardinality'],
-      '#description' => $this->t('In case of cardinality 1, radios instead of checboxes will be displayed.')
-    ];
-  }
 
   /**
    * Returns the ID for a result row.
@@ -101,12 +74,6 @@ class SelectForm extends FieldPluginBase {
           '#attributes' => ['name' => "entity_browser_select[$value]"],
           '#default_value' => NULL,
         ];
-
-        if ($this->options['use_field_cardinality'] && isset($this->view->cardinality) && $this->view->cardinality == 1) {
-          $render[$this->options['id']][$value]['#type'] = 'radio';
-          $render[$this->options['id']][$value]['#attributes'] = ['name' => "entity_browser_select"];
-          $render[$this->options['id']][$value]['#parents'] = ['entity_browser_select'];
-        }
       }
     }
   }

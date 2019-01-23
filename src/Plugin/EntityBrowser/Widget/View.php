@@ -3,11 +3,9 @@
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
-use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
-use Drupal\entity_browser\Plugin\views\field\SelectForm;
 use Drupal\entity_browser\WidgetBase;
 use Drupal\Core\Url;
 use Drupal\entity_browser\WidgetValidationManager;
@@ -120,13 +118,6 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
       }
     }
 
-    $cardinality = NestedArray::getValue($form_state->getStorage(), ['entity_browser', 'validators', 'cardinality', 'cardinality']);
-    $form_state->set('view', $view);
-    $form_state->set('view_display', $this->configuration['view_display']);
-    if ($cardinality) {
-      $view->cardinality = $cardinality;
-    }
-
     $form['view'] = $view->executeDisplay($this->configuration['view_display']);
 
     if (empty($view->field['entity_browser_select'])) {
@@ -181,29 +172,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
   public function validate(array &$form, FormStateInterface $form_state) {
     $user_input = $form_state->getUserInput();
     if (isset($user_input['entity_browser_select'])) {
-      if (is_array($user_input['entity_browser_select'])) {
-        $selected_rows = array_values(array_filter($user_input['entity_browser_select']));
-      }
-      else {
-        $selected_rows = [$user_input['entity_browser_select']];
-      }
-
-      $cardinality = NestedArray::getValue($form_state->getStorage(), ['entity_browser', 'validators', 'cardinality', 'cardinality']);
-      $display = $form_state->get('view')->getDisplay($form_state->get(['view_display']));
-
-      $use_field_cardinality = FALSE;
-      foreach ($display->getHandlers('field') as $handler) {
-        if ($handler instanceof SelectForm && $handler->options['use_field_cardinality']) {
-          $use_field_cardinality = TRUE;
-        }
-      }
-
-      if ($use_field_cardinality && $cardinality > 0) {
-        if (count($selected_rows) > $cardinality) {
-          $form_state->setError($form['widget']['view']['entity_browser_select'], $this->t('You can only select up to @number items.', ['@number' => $cardinality]));
-        }
-      }
-
+      $selected_rows = array_values(array_filter($user_input['entity_browser_select']));
       foreach ($selected_rows as $row) {
         // Verify that the user input is a string and split it.
         // Each $row is in the format entity_type:id.
@@ -241,22 +210,13 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   protected function prepareEntities(array $form, FormStateInterface $form_state) {
-    if (is_array($form_state->getUserInput()['entity_browser_select'])) {
-      $selected_rows = array_values(array_filter($form_state->getUserInput()['entity_browser_select']));
-    }
-    else {
-      $selected_rows = [$form_state->getUserInput()['entity_browser_select']];
-    }
-
+    $selected_rows = array_values(array_filter($form_state->getUserInput()['entity_browser_select']));
     $entities = [];
     foreach ($selected_rows as $row) {
-      $item = explode(':', $row);
-      if (count($item) == 2) {
-        list($type, $id) = $item;
-        $storage = $this->entityTypeManager->getStorage($type);
-        if ($entity = $storage->load($id)) {
-          $entities[] = $entity;
-        }
+      list($type, $id) = explode(':', $row);
+      $storage = $this->entityTypeManager->getStorage($type);
+      if ($entity = $storage->load($id)) {
+        $entities[] = $entity;
       }
     }
     return $entities;
