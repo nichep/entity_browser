@@ -71,6 +71,9 @@ class Modal extends IFrame {
           'library' => ['core/drupal.dialog.ajax', 'entity_browser/modal'],
           'drupalSettings' => [
             'entity_browser' => [
+              $this->getUuid() => [
+                'auto_open' => $this->configuration['auto_open'],
+              ],
               'modal' => [
                 $this->getUuid() => [
                   'uuid' => $this->getUuid(),
