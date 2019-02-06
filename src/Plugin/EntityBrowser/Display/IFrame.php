@@ -155,6 +155,9 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
           'library' => ['entity_browser/iframe'],
           'drupalSettings' => [
             'entity_browser' => [
+              $this->getUuid() => [
+                'auto_open' => $this->configuration['auto_open'],
+              ],
               'iframe' => [
                 $this->getUuid() => [
                   'src' => Url::fromRoute('entity_browser.' . $this->configuration['entity_browser_id'], [], $data['query_parameters'])
