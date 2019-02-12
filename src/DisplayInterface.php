@@ -48,9 +48,10 @@ interface DisplayInterface extends PluginInspectionInterface, ConfigurablePlugin
    *   discard the current form state. Arbitrary values can be added and used
    *   by widgets, if needed.
    *   Expected array keys:
-   *     @type \Drupal\Core\Entity\EntityInterface[] $selected_entities
+   *
+   * @type \Drupal\Core\Entity\EntityInterface[] $selected_entities
    *       An array of currently selected entities.
-   *     @type array $validators
+   * @type array $validators
    *       An associative array mapping EntityBrowserWidgetValidation IDs to
    *       an array of options to pass to the plugin's validate method.
    *

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file Contains entity_browser.update-hook-test.php.
+ */
+
 use Drupal\Core\Database\Database;
 use Drupal\Component\Serialization\Yaml;
 

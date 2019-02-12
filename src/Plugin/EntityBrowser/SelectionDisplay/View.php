@@ -38,8 +38,9 @@ class View extends SelectionDisplayBase {
   public function getForm(array &$original_form, FormStateInterface $form_state) {
     $form = [];
 
-    // TODO - do we need better error handling for view and view_display (in case
-    // either of those is nonexistent or display not of correct type)?
+    // TODO - do we need better error handling for view and view_display
+    // (in case either of those is nonexistent
+    // or display not of correct type)?
     $storage = &$form_state->getStorage();
     if (empty($storage['selection_display_view']) || $form_state->isRebuilding()) {
       $storage['selection_display_view'] = $this->entityTypeManager
@@ -99,7 +100,7 @@ class View extends SelectionDisplayBase {
       '#default_value' => $this->configuration['view'] . '.' . $this->configuration['view_display'],
       '#options' => $options,
       '#required' => TRUE,
-      '#description' => $this->t('View display to use for displaying currently selected items. Do note that to get something usefull out of this display, its first contextual filter should be a filter on the primary identifier field of your entity type (e.g., Node ID, Media ID).'),
+      '#description' => $this->t('View display to use for displaying currently selected items. Do note that to get something useful out of this display, its first contextual filter should be a filter on the primary identifier field of your entity type (e.g., Node ID, Media ID).'),
     ];
 
     return $form;

@@ -26,7 +26,7 @@ class WidgetsConfig extends EntityForm {
    * @param \Drupal\entity_browser\WidgetManager $widget_manager
    *   Entity browser widget plugin manager.
    */
-  function __construct(WidgetManager $widget_manager) {
+  public function __construct(WidgetManager $widget_manager) {
     $this->widgetManager = $widget_manager;
   }
 

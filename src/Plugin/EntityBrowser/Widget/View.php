@@ -294,7 +294,6 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
       ->load($this->configuration['view'])
       ->getExecutable();
 
-
     // Check if the current user has access to this view.
     return AccessResult::allowedIf($view->access($this->configuration['view_display']));
   }

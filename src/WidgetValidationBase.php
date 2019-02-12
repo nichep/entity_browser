@@ -28,6 +28,9 @@ abstract class WidgetValidationBase extends PluginBase implements WidgetValidati
    */
   protected $typedDataManager;
 
+  /**
+   * {@inheritdoc}
+   */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, TypedDataManagerInterface $typed_data_manager) {
     $plugin_definition += [
       'constraint' => NULL,
@@ -65,7 +68,7 @@ abstract class WidgetValidationBase extends PluginBase implements WidgetValidati
   /**
    * {@inheritdoc}
    */
-  public function validate(array $entities, $options = []) {
+  public function validate(array $entities, array $options = []) {
     $plugin_definition = $this->getPluginDefinition();
     $data_definition = $this->getDataDefinition($plugin_definition['data_type'], $plugin_definition['constraint'], $options);
     return $this->validateDataDefinition($data_definition, $entities);
@@ -119,7 +122,7 @@ abstract class WidgetValidationBase extends PluginBase implements WidgetValidati
    * @param \Drupal\Core\TypedData\DataDefinitionInterface $data_definition
    *   The data definition generated from ::getDataDefinition().
    * @param array $entities
-   *   An array of Entities to validate the definition against
+   *   An array of Entities to validate the definition against.
    *
    * @return \Symfony\Component\Validator\ConstraintViolationListInterface
    *   A list of violations.
@@ -133,4 +136,5 @@ abstract class WidgetValidationBase extends PluginBase implements WidgetValidati
 
     return $violations;
   }
+
 }

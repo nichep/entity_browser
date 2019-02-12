@@ -102,7 +102,7 @@ class EntityFormWidgetTest extends JavascriptTestBase {
     $this->assertSession()->buttonNotExists('Save entity');
     $this->assertSession()->buttonExists('Save node');
 
-    // Make sure that the widget works correctly with the field widget
+    // Make sure that the widget works correctly with the field widget.
     $this->drupalGet('node/add/foo');
     $this->getSession()->getPage()->clickLink('Select entities');
     $this->getSession()->switchToIFrame('entity_browser_iframe_entity_browser_test_entity_form');
