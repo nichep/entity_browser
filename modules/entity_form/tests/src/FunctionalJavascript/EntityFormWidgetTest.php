@@ -21,7 +21,6 @@ class EntityFormWidgetTest extends JavascriptTestBase {
    */
   public static $modules = [
     'entity_browser_entity_form_test',
-    'ctools',
     'views',
     'block',
     'node',

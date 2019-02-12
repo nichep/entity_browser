@@ -17,7 +17,6 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
    * {@inheritdoc}
    */
   public static $modules = [
-    'ctools',
     'views',
     'block',
     'node',
