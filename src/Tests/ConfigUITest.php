@@ -48,7 +48,7 @@ class ConfigUITest extends WebTestBase {
   /**
    * Tests the entity browser config UI.
    */
-  public function testConfigUI() {
+  public function testConfigUserInterface() {
     // We need token module to test upload widget settings.
     $this->container->get('module_installer')->install(['token']);
 

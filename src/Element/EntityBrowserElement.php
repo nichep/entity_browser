@@ -171,7 +171,7 @@ class EntityBrowserElement extends FormElement {
         '#markup' => is_string($element['#entity_browser']) ? t('Entity browser @browser not found.', ['@browser' => $element['#entity_browser']]) : t('Entity browser not found.'),
       ];
     }
-    // Display entity_browser
+    // Display entity_browser.
     else {
       $display = $entity_browser->getDisplay();
       $display->setUuid(sha1(implode('-', array_merge([$complete_form['#build_id']], $element['#parents']))));

@@ -26,7 +26,7 @@ class EntityBrowserUITest extends WebTestBase {
   /**
    * Tests entity browser UI.
    */
-  public function testEntityBrowserUI() {
+  public function testEntityBrowserUserInterface() {
     $account = $this->drupalCreateUser([
       'administer entity browsers',
       'access test_entity_browser_iframe entity browser pages',

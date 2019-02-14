@@ -420,7 +420,9 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   }
 
   /**
-   * Prevent plugin collections from being serialized and correctly serialize
+   * Sleep method.
+   *
+   * Prevents plugin collections from being serialized and correctly serializes
    * selected entities.
    */
   public function __sleep() {

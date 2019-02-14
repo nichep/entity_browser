@@ -391,7 +391,7 @@ class MultiStepDisplay extends SelectionDisplayBase {
   /**
    * Saves new ordering of entities based on weight.
    *
-   * @param FormStateInterface $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Form state.
    */
   public static function saveNewOrder(FormStateInterface $form_state) {

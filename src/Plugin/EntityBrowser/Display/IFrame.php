@@ -206,7 +206,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    * Intercepts default response and injects response that will trigger JS to
    * propagate selected entities upstream.
    *
-   * @param FilterResponseEvent $event
+   * @param \Symfony\Component\HttpKernel\Event\FilterResponseEvent $event
    *   Response event.
    */
   public function propagateSelection(FilterResponseEvent $event) {
@@ -216,7 +216,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
           return $item->label();
         }, $this->entities)),
         '#attached' => [
-          'library' => ['entity_browser/'. $this->pluginDefinition['id'] . '_selection'],
+          'library' => ['entity_browser/' . $this->pluginDefinition['id'] . '_selection'],
           'drupalSettings' => [
             'entity_browser' => [
               $this->pluginDefinition['id'] => [
