@@ -157,7 +157,7 @@ class MultiStepDisplay extends SelectionDisplayBase {
 
     $form['use_selected'] = [
       '#type' => 'submit',
-      '#value' => $this->t($this->configuration['select_text']),
+      '#value' => $this->configuration['select_text'],
       '#name' => 'use_selected',
       '#attributes' => [
         'class' => ['entity-browser-use-selected', 'button--primary'],
