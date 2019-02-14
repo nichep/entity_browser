@@ -245,7 +245,8 @@ class EntityBrowserElement extends FormElement {
     return array_map(
       function ($item) {
         list($entity_type, $entity_id) = explode(':', $item);
-        return \Drupal::entityTypeManager()->getStorage($entity_type)->load($entity_id);
+        $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($entity_id);
+        return \Drupal::service('entity.repository')->getTranslationFromContext($entity);
       },
       $ids
     );
