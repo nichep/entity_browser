@@ -55,7 +55,7 @@ interface DisplayInterface extends PluginInspectionInterface, ConfigurablePlugin
    *       an array of options to pass to the plugin's validate method.
    *
    * @return array
-   *   An array suitable for drupal_render().
+   *   A render array.
    */
   public function displayEntityBrowser(array $element, FormStateInterface $form_state, array &$complete_form, array $persistent_data = []);
 
