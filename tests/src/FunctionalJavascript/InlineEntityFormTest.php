@@ -256,4 +256,5 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
 
     $this->assertSession()->pageTextContains('Test entity browser file modal');
   }
+
 }

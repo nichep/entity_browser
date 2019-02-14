@@ -13,7 +13,6 @@ use Drupal\entity_browser\WidgetInterface;
 use Drupal\entity_browser\WidgetSelectorInterface;
 use Drupal\entity_browser\SelectionDisplayInterface;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\user\Entity\User;
 use Drupal\views\Entity\View;
 
 /**
