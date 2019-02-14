@@ -128,7 +128,7 @@ class Modal extends IFrame {
     if (!empty($this->configuration['height']) && is_numeric($this->configuration['height']) && $this->configuration['height'] > 90) {
       $content['#attributes']['height'] = $this->configuration['height'] - 90;
     }
-    $html = drupal_render($content);
+    $html = $this->renderer->render($content);
 
     $response = new AjaxResponse();
     $response->addCommand(new OpenDialogCommand('#' . Html::getUniqueId($field_name . '-' . $element_name . '-dialog'), $this->configuration['link_text'], $html, [
