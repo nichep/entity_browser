@@ -69,12 +69,15 @@ class ConfigurationTest extends WebDriverTestBase {
 
     // Test that anonymous user can't access admin pages.
     $this->drupalGet('/admin/config/content/entity_browser');
-    $this->assertSession()->responseContains('Access denied. You must log in to view this page.');
+    $this->assertSession()->statusCodeEquals(403);
+    $this->assertSession()->responseNotContains('Add Entity browser');
     $this->drupalGet('/admin/config/content/entity_browser/add');
+    $this->assertSession()->statusCodeEquals(403);
     $this->assertSession()->responseContains('Access denied. You must log in to view this page.');
 
     $this->drupalLogin($this->adminUser);
     $this->drupalGet('/admin/config/content/entity_browser');
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->responseNotContains('Access denied. You must log in to view this page.');
     $this->assertSession()->responseContains('There are no entity browser entities yet.');
 
