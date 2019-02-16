@@ -22,7 +22,7 @@ class ConfigurationTest extends WebDriverTestBase {
     'entity_browser',
     'entity_browser_entity_form',
     'node',
-    'taxonomy_term',
+    'taxonomy',
     'views',
   ];
 
