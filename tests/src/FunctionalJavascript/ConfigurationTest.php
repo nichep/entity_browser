@@ -226,20 +226,4 @@ class ConfigurationTest extends WebDriverTestBase {
 
   }
 
-  /**
-   * Tests widget configuration.
-   */
-  public function testWidgetConfiguration() {
-
-    $this->drupalLogin($this->adminUser);
-    $this->drupalGet('/admin/config/content/entity_browser');
-    $this->clickLink('Add Entity browser');
-    $this->assertSession()->fieldExists('entity_id')->setValue('Test entity browser');
-    $this->assertSession()->buttonExists('Save')->press();
-    $this->assertSession()->addressEquals('/admin/config/content/entity_browser/test_entity_browser/widgets');
-    $this->assertSession()->selectExists('widget');
-
-    // @todo Copy and convert widget testing from ConfigUITest.php.
-  }
-
 }
