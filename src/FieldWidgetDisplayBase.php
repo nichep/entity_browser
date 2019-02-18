@@ -70,4 +70,12 @@ abstract class FieldWidgetDisplayBase extends PluginBase implements FieldWidgetD
     return [];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getDisplayLabel(EntityTypeInterface $entity_type) {
+    $label = $entity_type->getSingularLabel()->getUntranslatedString();
+    return $this->t($label . ' Label');
+  }
+
 }

@@ -18,6 +18,7 @@ content:
     settings:
       entity_browser: test_nodes
       field_widget_display: label
+      list_style: grid
       field_widget_edit: true
       field_widget_remove: true
       field_widget_replace: false

@@ -4,17 +4,17 @@ namespace Drupal\entity_browser\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\entity_browser\Element\EntityBrowserElement;
+use Drupal\entity_browser\ListBuilder\GridListBuilder;
+use Drupal\entity_browser\ListBuilder\TableListBuilder;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Url;
 use Drupal\Core\Validation\Plugin\Validation\Constraint\NotNullConstraint;
 use Drupal\entity_browser\FieldWidgetDisplayManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -23,6 +23,7 @@ use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Component\Utility\SortArray;
 
 /**
  * Plugin implementation of the 'entity_reference' widget for entity browser.
@@ -134,6 +135,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       'entity_browser' => NULL,
       'open' => FALSE,
       'field_widget_display' => 'label',
+      'list_style' => 'grid',
       'field_widget_edit' => TRUE,
       'field_widget_remove' => TRUE,
       'field_widget_replace' => FALSE,
@@ -181,6 +183,13 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
         'callback' => [$this, 'updateSettingsAjax'],
         'wrapper' => $id,
       ],
+    ];
+
+    $element['list_style'] = [
+      '#title' => $this->t('List style'),
+      '#type' => 'select',
+      '#default_value' => $this->getSetting('list_style'),
+      '#options' => $this->listStyleOptions()
     ];
 
     $edit_button_access = TRUE;
@@ -268,6 +277,8 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       $plugin = $this->fieldDisplayManager->getDefinition($field_widget_display);
       $summary[] = $this->t('Entity display: @name', ['@name' => $plugin['label']]);
     }
+
+    $summary[] = $this->t('List Style: @name', ['@name' => $this->listStyleOptions()[$this->getSetting('list_style')]]);
     return $summary;
   }
 
@@ -318,7 +329,6 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-    $entity_type = $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type');
     $entities = $this->formElementEntities($items, $element, $form_state);
 
     // Get correct ordered list of entity IDs.
@@ -340,10 +350,17 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
     $hidden_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName() . '-target-id');
     $details_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName());
 
+    $trigger = $trigger = $form_state->getTriggeringElement();
+
+    $itemWasRemoved = FALSE;
+    if (!empty($trigger['#name']) && strpos($trigger['#name'], '_remove_')) {
+      $itemWasRemoved = TRUE;
+    }
+
     $element += [
       '#id' => $details_id,
       '#type' => 'details',
-      '#open' => !empty($entities) || $this->getSetting('open'),
+      '#open' => !empty($entities) || $this->getSetting('open') || $itemWasRemoved,
       '#required' => $this->fieldDefinition->isRequired(),
       // We are not using Entity browser's hidden element since we maintain
       // selected entities in it during entire process.
@@ -353,10 +370,10 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
         // We need to repeat ID here as it is otherwise skipped when rendering.
         '#attributes' => ['id' => $hidden_id],
         '#default_value' => implode(' ', array_map(
-            function (EntityInterface $item) {
-              return $item->getEntityTypeId() . ':' . $item->id();
-            },
-            $entities
+          function (EntityInterface $item) {
+            return $item->getEntityTypeId() . ':' . $item->id();
+          },
+          $entities
         )),
         // #ajax is officially not supported for hidden elements but if we
         // specify event manually it works.
@@ -415,9 +432,22 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
     $entities = empty($values['target_id']) ? [] : explode(' ', trim($values['target_id']));
+
     $return = [];
     foreach ($entities as $entity) {
       $return[]['target_id'] = explode(':', $entity)[1];
+    }
+
+    // Pull order from tabledrag if available.
+    if (!empty($values['current']['table'])) {
+      $return = [];
+      uasort($values['current']['table'], [SortArray::class, 'sortByWeightElement']);
+      $sorted_entity_ids = array_keys($values['current']['table']);
+      foreach ($sorted_entity_ids as $entity_id) {
+        $return[] = [
+          'target_id' => $entity_id,
+        ];
+      }
     }
 
     return $return;
@@ -459,7 +489,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
   public function errorElement(array $element, ConstraintViolationInterface $violation, array $form, FormStateInterface $form_state) {
     if (($trigger = $form_state->getTriggeringElement())) {
       // Can be triggered by "Remove" button.
-      if (end($trigger['#parents']) === 'remove_button') {
+      if (strpos($trigger['#name'], '_remove_')) {
         return FALSE;
       }
     }
@@ -512,106 +542,30 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    *   The render array for the current selection.
    */
   protected function displayCurrentSelection($details_id, $field_parents, $entities) {
+    $entity_type_id = $this->fieldDefinition->getSettings()['target_type'];
+    $settings['entity_type'] = $entity_type_id;
+    $field_widget_display = $this->fieldDisplayManager
+      ->createInstance($this->getSetting('field_widget_display'), $settings);
 
-    $field_widget_display = $this->fieldDisplayManager->createInstance(
-      $this->getSetting('field_widget_display'),
-      $this->getSetting('field_widget_display_settings') + ['entity_type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')]
-    );
-
-    $classes = ['entities-list'];
-    if ($this->fieldDefinition->getFieldStorageDefinition()->getCardinality() != 1) {
-      $classes[] = 'sortable';
-    }
-
-    // The "Replace" button will only be shown if this setting is enabled in the
-    // widget, and there is only one entity in the current selection.
-    $replace_button_access = $this->getSetting('field_widget_replace') && (count($entities) === 1);
-
-    return [
-      '#theme_wrappers' => ['container'],
-      '#attributes' => ['class' => $classes],
-      'items' => array_map(
-        function (ContentEntityInterface $entity, $row_id) use ($field_widget_display, $details_id, $field_parents, $replace_button_access) {
-          $display = $field_widget_display->view($entity);
-          $edit_button_access = $this->getSetting('field_widget_edit') && $entity->access('update', $this->currentUser);
-          if ($entity->getEntityTypeId() == 'file') {
-            // On file entities, the "edit" button shouldn't be visible unless
-            // the module "file_entity" is present, which will allow them to be
-            // edited on their own form.
-            $edit_button_access &= $this->moduleHandler->moduleExists('file_entity');
-          }
-          if (is_string($display)) {
-            $display = ['#markup' => $display];
-          }
-          return [
-            '#theme_wrappers' => ['container'],
-            '#attributes' => [
-              'class' => ['item-container', Html::getClass($field_widget_display->getPluginId())],
-              'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity->id(),
-              'data-row-id' => $row_id,
-            ],
-            'display' => $display,
-            'remove_button' => [
-              '#type' => 'submit',
-              '#value' => $this->t('Remove'),
-              '#ajax' => [
-                'callback' => [get_class($this), 'updateWidgetCallback'],
-                'wrapper' => $details_id,
-              ],
-              '#submit' => [[get_class($this), 'removeItemSubmit']],
-              '#name' => $this->fieldDefinition->getName() . '_remove_' . $entity->id() . '_' . $row_id . '_' . md5(json_encode($field_parents)),
-              '#limit_validation_errors' => [array_merge($field_parents, [$this->fieldDefinition->getName()])],
-              '#attributes' => [
-                'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity->id(),
-                'data-row-id' => $row_id,
-                'class' => ['remove-button'],
-              ],
-              '#access' => (bool) $this->getSetting('field_widget_remove'),
-            ],
-            'replace_button' => [
-              '#type' => 'submit',
-              '#value' => $this->t('Replace'),
-              '#ajax' => [
-                'callback' => [get_class($this), 'updateWidgetCallback'],
-                'wrapper' => $details_id,
-              ],
-              '#submit' => [[get_class($this), 'removeItemSubmit']],
-              '#name' => $this->fieldDefinition->getName() . '_replace_' . $entity->id() . '_' . $row_id . '_' . md5(json_encode($field_parents)),
-              '#limit_validation_errors' => [array_merge($field_parents, [$this->fieldDefinition->getName()])],
-              '#attributes' => [
-                'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity->id(),
-                'data-row-id' => $row_id,
-                'class' => ['replace-button'],
-              ],
-              '#access' => $replace_button_access,
-            ],
-            'edit_button' => [
-              '#type' => 'submit',
-              '#value' => $this->t('Edit'),
-              '#ajax' => [
-                'url' => Url::fromRoute(
-                  'entity_browser.edit_form', [
-                    'entity_type' => $entity->getEntityTypeId(),
-                    'entity' => $entity->id(),
-                  ]
-                ),
-                'options' => [
-                  'query' => [
-                    'details_id' => $details_id,
-                  ],
-                ],
-              ],
-              '#attributes' => [
-                'class' => ['edit-button'],
-              ],
-              '#access' => $edit_button_access,
-            ],
-          ];
-        },
-        $entities,
-        empty($entities) ? [] : range(0, count($entities) - 1)
-      ),
+    $params = [
+      $this->entityTypeManager->getDefinition($entity_type_id),
+      $this->entityTypeManager->getStorage($entity_type_id),
+      $entities,
+      $field_widget_display,
+      $details_id,
+      $this->getSettings(),
+      $field_parents,
+      $this->fieldDefinition->getName(),
+      $this->fieldDefinition->getFieldStorageDefinition()->getCardinality(),
     ];
+
+    if ($this->getSetting('list_style') == 'table') {
+      $listBuilder = new TableListBuilder(...$params);
+    }
+    else {
+      $listBuilder = new GridListBuilder(...$params);
+    }
+    return $listBuilder->render();
   }
 
   /**
@@ -636,7 +590,23 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    *   Mode labels indexed by key.
    */
   protected function selectionModeOptions() {
-    return ['append' => $this->t('Append'), 'prepend' => $this->t('Prepend')];
+    return [
+      'append' => $this->t('Append'),
+      'prepend' => $this->t('Prepend')
+    ];
+  }
+
+  /**
+   * Gets options that define how items are displayed in a list.
+   *
+   * @return array
+   *   An array of options.
+   */
+  protected function listStyleOptions() {
+    return [
+      'grid' => $this->t('Grid'),
+      'table' => $this->t('Table'),
+    ];
   }
 
   /**

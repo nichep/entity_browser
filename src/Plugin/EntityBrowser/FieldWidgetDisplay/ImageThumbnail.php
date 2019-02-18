@@ -118,4 +118,11 @@ class ImageThumbnail extends FieldWidgetDisplayBase implements ContainerFactoryP
     return $dependencies;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getDisplayLabel(EntityTypeInterface $entity_type) {
+    return $this->t('Thumbnail');
+  }
+
 }

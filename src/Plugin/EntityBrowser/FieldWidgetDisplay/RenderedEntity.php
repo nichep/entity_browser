@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\entity_browser\FieldWidgetDisplayBase;
+use Drupal\Core\Entity\EntityTypeInterface;
 
 /**
  * Displays the fully rendered entity.
@@ -72,7 +73,9 @@ class RenderedEntity extends FieldWidgetDisplayBase implements ContainerFactoryP
    * {@inheritdoc}
    */
   public function view(EntityInterface $entity) {
-    return $this->entityTypeManager->getViewBuilder($this->configuration['entity_type'])->view($entity, $this->configuration['view_mode']);
+    return $this->entityTypeManager
+      ->getViewBuilder($this->configuration['entity_type'])
+      ->view($entity, $this->configuration['view_mode']);
   }
 
   /**
@@ -113,6 +116,13 @@ class RenderedEntity extends FieldWidgetDisplayBase implements ContainerFactoryP
       $dependencies[$view_mode->getConfigDependencyKey()][] = $view_mode->getConfigDependencyName();
     }
     return $dependencies;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDisplayLabel(EntityTypeInterface $entity_type) {
+    return $this->t('Preview');
   }
 
 }

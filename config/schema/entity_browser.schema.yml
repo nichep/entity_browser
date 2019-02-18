@@ -163,6 +163,9 @@ field.widget.settings.entity_browser_entity_reference:
     field_widget_display:
       type: string
       label: 'Field widget display'
+    list_stype:
+      type: string
+      label: 'List Style'
     field_widget_edit:
       type: boolean
       label: 'Field widget edit'

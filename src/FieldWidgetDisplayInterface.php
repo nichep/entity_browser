@@ -48,4 +48,15 @@ interface FieldWidgetDisplayInterface extends PluginInspectionInterface, Configu
    */
   public function isApplicable(EntityTypeInterface $entity_type);
 
+  /**
+   * Get the display label for this plugin.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type that should be checked.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   *   The label to displayed to user when selections are displayed in a grid.
+   */
+  public function getDisplayLabel(EntityTypeInterface $entity_type);
+
 }
