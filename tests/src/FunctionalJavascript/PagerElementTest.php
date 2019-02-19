@@ -62,6 +62,7 @@ class PagerElementTest extends EntityBrowserJavascriptTestBase {
       'settings' => [
         'entity_browser' => 'pager',
         'field_widget_display' => 'label',
+        'list_style' => 'grid',
         'open' => TRUE,
       ],
     ])->save();

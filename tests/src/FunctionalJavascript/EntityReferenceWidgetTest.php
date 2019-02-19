@@ -70,6 +70,7 @@ class EntityReferenceWidgetTest extends EntityBrowserJavascriptTestBase {
       'type' => 'entity_browser_entity_reference',
       'settings' => [
         'entity_browser' => 'test_entity_browser_iframe_node_view',
+        'list_style' => 'grid',
         'open' => TRUE,
         'field_widget_edit' => TRUE,
         'field_widget_remove' => TRUE,
@@ -113,6 +114,7 @@ class EntityReferenceWidgetTest extends EntityBrowserJavascriptTestBase {
       'type' => 'entity_browser_entity_reference',
       'settings' => [
         'entity_browser' => 'test_entity_browser_iframe_node_view',
+        'list_style' => 'grid',
         'open' => TRUE,
         'field_widget_edit' => FALSE,
         'field_widget_remove' => FALSE,
@@ -131,6 +133,7 @@ class EntityReferenceWidgetTest extends EntityBrowserJavascriptTestBase {
       'type' => 'entity_browser_entity_reference',
       'settings' => [
         'entity_browser' => 'test_entity_browser_iframe_node_view',
+        'list_style' => 'grid',
         'open' => TRUE,
         'field_widget_edit' => TRUE,
         'field_widget_remove' => TRUE,
@@ -160,6 +163,7 @@ class EntityReferenceWidgetTest extends EntityBrowserJavascriptTestBase {
       'type' => 'entity_browser_entity_reference',
       'settings' => [
         'entity_browser' => 'test_entity_browser_iframe_node_view',
+        'list_style' => 'grid',
         'open' => TRUE,
         'field_widget_edit' => TRUE,
         'field_widget_remove' => TRUE,

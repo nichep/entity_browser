@@ -237,6 +237,7 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
       'settings' => [
         'entity_browser' => 'multiple_submit_example',
         'field_widget_display' => 'label',
+        'list_style' => 'grid',
         'open' => TRUE,
       ],
     ])->save();

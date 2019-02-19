@@ -80,6 +80,7 @@ abstract class EntityBrowserJavascriptTestBase extends JavascriptTestBase {
       'settings' => [
         'entity_browser' => 'test_entity_browser_file',
         'field_widget_display' => 'label',
+        'list_style' => 'grid',
         'open' => TRUE,
       ],
     ])->save();

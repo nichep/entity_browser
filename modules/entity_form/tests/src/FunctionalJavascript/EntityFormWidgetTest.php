@@ -67,6 +67,7 @@ class EntityFormWidgetTest extends JavascriptTestBase {
       'settings' => [
         'entity_browser' => 'entity_browser_test_entity_form',
         'field_widget_display' => 'label',
+        'list_style' => 'grid',
         'open' => TRUE,
       ],
     ])->save();
