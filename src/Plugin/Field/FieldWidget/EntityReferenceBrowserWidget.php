@@ -189,7 +189,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       '#title' => $this->t('List style'),
       '#type' => 'select',
       '#default_value' => $this->getSetting('list_style'),
-      '#options' => $this->listStyleOptions()
+      '#options' => $this->listStyleOptions(),
     ];
 
     $edit_button_access = TRUE;
@@ -245,13 +245,27 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       $element['field_widget_display_settings'] += $this->fieldDisplayManager
         ->createInstance(
           $form_state->getValue(
-            ['fields', $this->fieldDefinition->getName(), 'settings_edit_form', 'settings', 'field_widget_display'],
+            [
+              'fields',
+              $this->fieldDefinition->getName(),
+              'settings_edit_form',
+              'settings',
+              'field_widget_display',
+            ],
             $this->getSetting('field_widget_display')
           ),
           $form_state->getValue(
-            ['fields', $this->fieldDefinition->getName(), 'settings_edit_form', 'settings', 'field_widget_display_settings'],
+            [
+              'fields',
+              $this->fieldDefinition->getName(),
+              'settings_edit_form',
+              'settings',
+              'field_widget_display_settings',
+            ],
             $this->getSetting('field_widget_display_settings')
-          ) + ['entity_type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')]
+          ) + [
+            'entity_type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')
+          ]
         )
         ->settingsForm($form, $form_state);
     }
@@ -541,7 +555,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    * @return array
    *   The render array for the current selection.
    */
-  protected function displayCurrentSelection($details_id, $field_parents, $entities) {
+  protected function displayCurrentSelection($details_id, array $field_parents, array $entities) {
     $entity_type_id = $this->fieldDefinition->getSettings()['target_type'];
     $settings['entity_type'] = $entity_type_id;
     $field_widget_display = $this->fieldDisplayManager
@@ -577,7 +591,9 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
   protected function getPersistentData() {
     return [
       'validators' => [
-        'entity_type' => ['type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')],
+        'entity_type' => [
+          'type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')
+        ],
       ],
       'widget_context' => [],
     ];
@@ -592,7 +608,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
   protected function selectionModeOptions() {
     return [
       'append' => $this->t('Append'),
-      'prepend' => $this->t('Prepend')
+      'prepend' => $this->t('Prepend'),
     ];
   }
 

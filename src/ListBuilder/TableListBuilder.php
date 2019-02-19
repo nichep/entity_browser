@@ -88,10 +88,8 @@ class TableListBuilder extends EntityListBuilder {
    *   The entity storage class.
    * @param array $entities
    *   An array of entities to display.
-   * @param \Drupal\entity_browser\FieldWidgetDisplayInterface
-   *   A field Widget display plugin.
    * @param \Drupal\entity_browser\FieldWidgetDisplayInterface $display
-   *   The display plugin.
+   *   A field Widget display plugin.
    * @param string $wrapper
    *   The ajax wrapper.
    * @param array $settings
@@ -103,7 +101,7 @@ class TableListBuilder extends EntityListBuilder {
    * @param int $cardinality
    *   The current field cardinality.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, array $entities = [], $display, $wrapper, $settings, $parents, $field_name, $cardinality) {
+  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, array $entities, $display, $wrapper, array $settings, array $parents, $field_name, $cardinality) {
     $this->entityTypeId = $entity_type->id();
     $this->storage = $storage;
     $this->entityType = $entity_type;

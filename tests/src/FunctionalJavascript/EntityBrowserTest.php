@@ -176,9 +176,7 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
 
     // Causes a fatal.
     // Selects the upload widget.
-    // $this->getSession()
-    // ->getPage()
-    // ->selectFieldOption('widget', '2dc1ab07-2f8f-42c9-aab7-7eef7f8b7d87');
+    // "$this->getSession()->getPage()->selectFieldOption('widget', '2dc1ab07-2f8f-42c9-aab7-7eef7f8b7d87');".
     \Drupal::state()->set('eb_test_dummy_widget_access', FALSE);
     $this->drupalGet('entity-browser/iframe/test_entity_browser_file');
     // Dummy.
