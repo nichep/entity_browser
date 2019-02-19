@@ -439,10 +439,10 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
     }
 
     // Pull order from tabledrag if available.
-    if (!empty($values['current']['table'])) {
+    if ($this->getSetting('list_style') === 'table' && !empty($values['current'])) {
       $return = [];
-      uasort($values['current']['table'], [SortArray::class, 'sortByWeightElement']);
-      $sorted_entity_ids = array_keys($values['current']['table']);
+      uasort($values['current'], [SortArray::class, 'sortByWeightElement']);
+      $sorted_entity_ids = array_keys($values['current']);
       foreach ($sorted_entity_ids as $entity_id) {
         $return[] = [
           'target_id' => $entity_id,

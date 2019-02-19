@@ -5,6 +5,7 @@ namespace Drupal\entity_browser\ListBuilder;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
 use Drupal\Component\Utility\Html;
+use Drupal\entity_browser\Plugin\Field\FieldWidget\EntityReferenceBrowserWidget;
 
 /**
  * Defines a class to build a listing of selected entities.
@@ -40,10 +41,10 @@ class GridListBuilder extends TableListBuilder {
         '#type' => 'submit',
         '#value' => $this->t('Remove'),
         '#ajax' => [
-          'callback' => [get_class($this), 'updateWidgetCallback'],
+          'callback' => [EntityReferenceBrowserWidget::class, 'updateWidgetCallback'],
           'wrapper' => $this->ajaxWrapper,
         ],
-        '#submit' => [[get_class($this), 'removeItemSubmit']],
+        '#submit' => [[EntityReferenceBrowserWidget::class, 'removeItemSubmit']],
         '#name' => $this->fieldName . '_remove_' . $entity->id() . '_' . $this->delta . '_' . $hash,
         '#limit_validation_errors' => $limit_validation_errors,
         '#attributes' => [
@@ -57,10 +58,10 @@ class GridListBuilder extends TableListBuilder {
         '#type' => 'submit',
         '#value' => $this->t('Replace'),
         '#ajax' => [
-          'callback' => [get_class($this), 'updateWidgetCallback'],
+          'callback' => [EntityReferenceBrowserWidget::class, 'updateWidgetCallback'],
           'wrapper' => $this->ajaxWrapper,
         ],
-        '#submit' => [[get_class($this), 'removeItemSubmit']],
+        '#submit' => [[EntityReferenceBrowserWidget::class, 'removeItemSubmit']],
         '#name' => $this->fieldName . '_replace_' . $entity->id() . '_' . $this->delta . '_' . $hash,
         '#limit_validation_errors' => $limit_validation_errors,
         '#attributes' => [
