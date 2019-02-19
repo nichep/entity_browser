@@ -78,6 +78,9 @@ content:
     weight: 35
     settings:
       entity_browser: test_files
+      list_style:
+        type: string
+        label: 'List Style'
       field_widget_edit: true
       field_widget_remove: true
       field_widget_replace: false

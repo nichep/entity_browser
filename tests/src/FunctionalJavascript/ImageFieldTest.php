@@ -67,6 +67,7 @@ class ImageFieldTest extends EntityBrowserJavascriptTestBase {
       'type' => 'entity_browser_file',
       'settings' => [
         'entity_browser' => 'test_entity_browser_iframe_view',
+        'list_style' => 'grid',
         'open' => TRUE,
         'field_widget_edit' => FALSE,
         'field_widget_remove' => TRUE,

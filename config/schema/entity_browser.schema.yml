@@ -211,6 +211,9 @@ field.widget.settings.entity_browser_file:
     entity_browser:
       type: string
       label: 'Entity Browser'
+    list_style:
+      type: string
+      label: 'List Style'
     field_widget_edit:
       type: boolean
       label: 'Field widget edit'
