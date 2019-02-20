@@ -200,7 +200,7 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
   /**
    * {@inheritdoc}
    */
-  protected function displayCurrentSelection($details_id, $field_parents, $entities) {
+  protected function displayCurrentSelection($details_id, array $field_parents, array $entities) {
     $field_type = $this->fieldDefinition->getType();
     $field_settings = $this->fieldDefinition->getSettings();
     $field_machine_name = $this->fieldDefinition->getName();

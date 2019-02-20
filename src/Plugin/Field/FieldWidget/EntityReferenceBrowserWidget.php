@@ -511,7 +511,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    * @return array
    *   The render array for the current selection.
    */
-  protected function displayCurrentSelection($details_id, $field_parents, $entities) {
+  protected function displayCurrentSelection($details_id, array $field_parents, array $entities) {
 
     $field_widget_display = $this->fieldDisplayManager->createInstance(
       $this->getSetting('field_widget_display'),
