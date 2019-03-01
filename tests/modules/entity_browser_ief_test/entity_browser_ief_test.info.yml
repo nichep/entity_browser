@@ -3,7 +3,6 @@ type: module
 description: 'Test Inline Entity Form Integration'
 core: 8.x
 package: Testing
-version: VERSION
 dependencies:
   - file
   - entity_browser
