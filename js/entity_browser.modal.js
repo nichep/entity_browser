@@ -103,11 +103,11 @@
         }
         else {
           // If no maxHeight is defined, make it responsive.
-          dialog.option('height', vHeight - 100);
+          dialog.option('height', .92 * vHeight);
 
           // Because there is no iframe height 100% in HTML 5, we have to set
           // the height of the iframe as well.
-          var contentHeight = $this.find('.ui-dialog-content').height() - 20;
+          var contentHeight = $this.find('.ui-dialog-content').height();
           $this.find('iframe').css('height', contentHeight);
         }
 
