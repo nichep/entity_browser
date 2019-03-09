@@ -1,0 +1,12 @@
+name: 'Entity browser test configuration'
+type: module
+description: 'Test Configuration Forms.'
+core: 8.x
+package: Testing
+version: VERSION
+dependencies:
+  - entity_browser
+  - node
+  - path
+  - views
+  - user
