@@ -27,10 +27,14 @@
   },
   "license": "GPL-2.0+",
   "minimum-stability": "dev",
-  "require": { },
-  "extra": {
-    "branch-alias": {
-      "dev-8.x-1.x": "8.1.x-dev"
-    }
+  "require": {
+    "drupal/core": "~8.4"
+  },
+  "require-dev": {
+    "drupal/token": "~1.0",
+    "drupal/inline_entity_form": "~1.0",
+    "drupal/paragraphs": "~1.0",
+    "drupal/embed": "~1.0",
+    "drupal/entity_embed": "~1.0"
   }
 }

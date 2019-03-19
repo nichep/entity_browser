@@ -8,4 +8,6 @@ test_dependencies:
   - inline_entity_form:inline_entity_form
   - drupal:media (>= 8.4)
   - paragraphs:paragraphs
+  - embed:embed
+  - entity_embed:entity_embed
 configure: entity.entity_browser.collection

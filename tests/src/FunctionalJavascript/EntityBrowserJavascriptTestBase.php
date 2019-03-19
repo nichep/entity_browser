@@ -55,8 +55,6 @@ abstract class EntityBrowserJavascriptTestBase extends JavascriptTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
-
     FieldStorageConfig::create([
       'field_name' => 'field_reference',
       'type' => 'entity_reference',

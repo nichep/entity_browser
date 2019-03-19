@@ -27,6 +27,7 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
     'system',
     'node',
     'inline_entity_form',
+    'entity_browser_test',
     'entity_browser_ief_test',
   ];
 
@@ -38,8 +39,11 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
     'update media',
     'access ief_entity_browser_file entity browser pages',
     'access ief_entity_browser_file_modal entity browser pages',
+    'access widget_context_default_value entity browser pages',
     'access content',
     'create ief_content content',
+    'create shark content',
+    'create jet content',
     'edit any ief_content content',
   ];
 
@@ -254,6 +258,50 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
       ->switchToIFrame('entity_browser_iframe_ief_entity_browser_file_modal');
 
     $this->assertSession()->pageTextContains('Test entity browser file modal');
+  }
+
+  /**
+   * Tests the EntityBrowserWidgetContext argument_default views plugin.
+   */
+  public function testContextualFilter() {
+    $this->createNode(['type' => 'shark', 'title' => 'Luke']);
+    $this->createNode(['type' => 'jet', 'title' => 'Leia']);
+    $this->createNode(['type' => 'ief_content', 'title' => 'Darth']);
+
+    $this->drupalGet('node/add/ief_content');
+    $page = $this->getSession()->getPage();
+
+    $page->fillField('Title', 'Test IEF Title');
+    $page->pressButton('Add existing node');
+    $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
+
+    // Check that only nodes of an allowed type are listed.
+    $this->assertSession()->pageTextContains('Luke');
+    $this->assertSession()->pageTextContains('Leia');
+    $this->assertSession()->pageTextNotContains('Darth');
+
+    /** @var \Drupal\Core\Field\FieldConfigInterface $field_config */
+    $field_config = $this->container->get('entity_type.manager')
+      ->getStorage('field_config')
+      ->load('node.ief_content.field_nodes');
+    $handler_settings = $field_config->getSetting('handler_settings');
+    $handler_settings['target_bundles'] = [
+      'ief_content' => 'ief_content',
+    ];
+    $field_config->setSetting('handler_settings', $handler_settings);
+    $field_config->save();
+
+    $this->drupalGet('node/add/ief_content');
+    $page = $this->getSession()->getPage();
+
+    $page->fillField('Title', 'Test IEF Title');
+    $page->pressButton('Add existing node');
+    $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
+
+    // Check that only nodes of an allowed type are listed.
+    $this->assertSession()->pageTextNotContains('Luke');
+    $this->assertSession()->pageTextNotContains('Leia');
+    $this->assertSession()->pageTextContains('Darth');
   }
 
 }

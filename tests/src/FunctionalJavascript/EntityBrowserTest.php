@@ -266,4 +266,90 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     $this->assertSession()->buttonNotExists('Second submit button');
   }
 
+  /**
+   * Tests the EntityBrowserWidgetContext argument_default views plugin.
+   */
+  public function testContextualFilter() {
+    $this->createNode(['type' => 'shark', 'title' => 'Luke']);
+    $this->createNode(['type' => 'jet', 'title' => 'Leia']);
+    $this->createNode(['type' => 'article', 'title' => 'Darth']);
+
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display */
+    $form_display = $this->container->get('entity_type.manager')
+      ->getStorage('entity_form_display')
+      ->load('node.article.default');
+
+    $form_display->setComponent('field_reference', [
+      'type' => 'entity_browser_entity_reference',
+      'settings' => [
+        'entity_browser' => 'widget_context_default_value',
+        'field_widget_display' => 'label',
+        'open' => TRUE,
+      ],
+    ])->save();
+
+    /** @var \Drupal\Core\Field\FieldConfigInterface $field_config */
+    $field_config = $this->container->get('entity_type.manager')
+      ->getStorage('field_config')
+      ->load('node.article.field_reference');
+    $handler_settings = $field_config->getSetting('handler_settings');
+    $handler_settings['target_bundles'] = [
+      'shark' => 'shark',
+      'jet' => 'jet',
+    ];
+    $field_config->setSetting('handler_settings', $handler_settings);
+    $field_config->save();
+
+    // Set auto open to false on the entity browser.
+    $entity_browser = $this->container->get('entity_type.manager')
+      ->getStorage('entity_browser')
+      ->load('widget_context_default_value');
+
+    $display_configuration = $entity_browser->get('display_configuration');
+    $display_configuration['auto_open'] = FALSE;
+    $entity_browser->set('display_configuration', $display_configuration);
+    $entity_browser->save();
+
+    $account = $this->drupalCreateUser([
+      'access widget_context_default_value entity browser pages',
+      'create article content',
+      'access content',
+    ]);
+    $this->drupalLogin($account);
+
+    $this->drupalGet('node/add/article');
+
+    // Open the entity browser widget form.
+    $this->getSession()->getPage()->clickLink('Select entities');
+    $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
+
+    // Check that only nodes of an allowed type are listed.
+    $this->assertSession()->pageTextContains('Luke');
+    $this->assertSession()->pageTextContains('Leia');
+    $this->assertSession()->pageTextNotContains('Darth');
+
+    /** @var \Drupal\Core\Field\FieldConfigInterface $field_config */
+    $field_config = $this->container->get('entity_type.manager')
+      ->getStorage('field_config')
+      ->load('node.article.field_reference');
+    $handler_settings = $field_config->getSetting('handler_settings');
+    $handler_settings['target_bundles'] = [
+      'article' => 'article',
+    ];
+    $field_config->setSetting('handler_settings', $handler_settings);
+    $field_config->save();
+
+    $this->drupalGet('node/add/article');
+
+    // Open the entity browser widget form.
+    $this->getSession()->getPage()->clickLink('Select entities');
+    $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
+
+    // Check that only nodes of an allowed type are listed.
+    $this->assertSession()->pageTextNotContains('Luke');
+    $this->assertSession()->pageTextNotContains('Leia');
+    $this->assertSession()->pageTextContains('Darth');
+
+  }
+
 }
