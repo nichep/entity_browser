@@ -8,4 +8,6 @@ test_dependencies:
   - inline_entity_form:inline_entity_form
   - media_entity:media_entity
   - paragraphs:paragraphs
+  - embed:embed
+  - entity_embed:entity_embed
 configure: entity.entity_browser.collection

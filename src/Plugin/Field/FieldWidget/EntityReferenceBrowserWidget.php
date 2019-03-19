@@ -617,11 +617,16 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    *   Data that should persist after the Entity Browser is rendered.
    */
   protected function getPersistentData() {
+    $settings = $this->fieldDefinition->getSettings();
+    $handler = $settings['handler_settings'];
     return [
       'validators' => [
-        'entity_type' => ['type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')],
+        'entity_type' => ['type' => $settings['target_type']],
       ],
-      'widget_context' => [],
+      'widget_context' => [
+        'target_bundles' => !empty($handler['target_bundles']) ? $handler['target_bundles'] : [],
+        'target_entity_type' => $settings['target_type'],
+      ],
     ];
   }
 

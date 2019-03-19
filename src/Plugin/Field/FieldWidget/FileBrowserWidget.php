@@ -16,6 +16,7 @@ use Drupal\entity_browser\FieldWidgetDisplayManager;
 use Drupal\image\Entity\ImageStyle;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface;
 
 /**
  * Entity browser file widget.
@@ -62,6 +63,13 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
   protected $displayRepository;
 
   /**
+   * The mime type guesser service.
+   *
+   * @var \Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface
+   */
+  protected $mimeTypeGuesser;
+
+  /**
    * Constructs widget plugin.
    *
    * @param string $plugin_id
@@ -86,13 +94,16 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
    *   The module handler service.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
+   * @param \Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface $mime_type_guesser
+   *   The mime type guesser service.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityTypeManagerInterface $entity_type_manager, FieldWidgetDisplayManager $field_display_manager, ConfigFactoryInterface $config_factory, EntityDisplayRepositoryInterface $display_repository, ModuleHandlerInterface $module_handler, AccountInterface $current_user) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityTypeManagerInterface $entity_type_manager, FieldWidgetDisplayManager $field_display_manager, ConfigFactoryInterface $config_factory, EntityDisplayRepositoryInterface $display_repository, ModuleHandlerInterface $module_handler, AccountInterface $current_user, MimeTypeGuesserInterface $mime_type_guesser) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings, $entity_type_manager, $field_display_manager, $module_handler, $current_user);
     $this->entityTypeManager = $entity_type_manager;
     $this->fieldDisplayManager = $field_display_manager;
     $this->configFactory = $config_factory;
     $this->displayRepository = $display_repository;
+    $this->mimeTypeGuesser = $mime_type_guesser;
   }
 
   /**
@@ -110,7 +121,8 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
       $container->get('config.factory'),
       $container->get('entity_display.repository'),
       $container->get('module_handler'),
-      $container->get('current_user')
+      $container->get('current_user'),
+      $container->get('file.mime_type.guesser')
     );
   }
 
@@ -512,6 +524,16 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
     // Provide context for widgets to enhance their configuration.
     $data['widget_context']['upload_location'] = $settings['uri_scheme'] . '://' . $settings['file_directory'];
     $data['widget_context']['upload_validators'] = $this->getFileValidators(TRUE);
+    // Assemble valid mime types for filtering. This is required if we want to
+    // contextually filter allowed extensions in views, as views arguments can
+    // only filter on exact values. Otherwise we would pass %png or use REGEXP.
+    $mimetypes = [];
+    foreach (explode(' ', $settings['file_extensions']) as $extension) {
+      if ($guess = $this->mimeTypeGuesser->guess('file.' . $extension)) {
+        $mimetypes[] = $guess;
+      }
+    }
+    $data['widget_context']['target_file_mimetypes'] = $mimetypes;
     return $data;
   }
 

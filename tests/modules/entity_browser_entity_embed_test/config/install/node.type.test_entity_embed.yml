@@ -1,8 +1,8 @@
 langcode: en
 status: true
 dependencies: {  }
-name: 'Test IEF Content'
-type: ief_content
+name: 'Test Entity Embed'
+type: test_entity_embed
 description: 'Test content type for problem with inconsistent state of inline entity form entity browser field widget.'
 help: ''
 new_revision: false
