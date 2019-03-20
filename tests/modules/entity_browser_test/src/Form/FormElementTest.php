@@ -5,12 +5,15 @@ namespace Drupal\entity_browser_test\Form;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\entity_browser\Element\EntityBrowserElement;
 
 /**
  * Provides a user login form.
  */
 class FormElementTest extends FormBase {
+
+  use MessengerTrait;
 
   /**
    * {@inheritdoc}
@@ -59,7 +62,7 @@ class FormElementTest extends FormBase {
       },
       $entities
     ));
-    drupal_set_message($message);
+    $this->messenger()->addMessage($message);
   }
 
 }

@@ -77,6 +77,7 @@ class ConfigurationTest extends WebDriverTestBase {
     $this->assertSession()->selectExists('widget_selector')->selectOption('tabs');
     $this->assertSession()->selectExists('selection_display')->selectOption('no_display');
     $this->drupalPostForm(NULL, [], 'Save');
+    $this->assertSession()->pageTextContains('The entity browser Test entity browser has been added. Now you may configure the widgets you would like to use.');
 
     $this->assertSession()->addressEquals('/admin/config/content/entity_browser/test_entity_browser/widgets');
     $this->assertSession()->selectExists('widget');
@@ -108,6 +109,7 @@ class ConfigurationTest extends WebDriverTestBase {
     $this->assertSession()->fieldExists('display_configuration[link_text]')->setValue('All animals are created equal');
     $this->drupalPostForm(NULL, [], 'Save');
     $this->assertSession()->addressEquals('/admin/config/content/entity_browser/test_entity_browser/edit');
+    $this->assertSession()->pageTextContains('The entity browser Test entity browser has been updated.');
 
     $entity_browser = EntityBrowser::load('test_entity_browser');
 
@@ -132,6 +134,7 @@ class ConfigurationTest extends WebDriverTestBase {
     $this->assertSession()->fieldExists('display_configuration[path]')->setValue('/all-animals');
     $this->drupalPostForm(NULL, [], 'Save');
     $this->assertSession()->addressEquals('/admin/config/content/entity_browser/test_entity_browser/edit');
+    $this->assertSession()->pageTextContains('The entity browser Test entity browser has been updated.');
     $this->clickLink('General Settings');
     $this->assertSession()->addressEquals('/admin/config/content/entity_browser/test_entity_browser/edit');
     $this->getSession()->executeScript("jQuery('details').attr('open', 'open');");
@@ -151,6 +154,7 @@ class ConfigurationTest extends WebDriverTestBase {
     $this->assertSession()->responseContains('The Path field must begin with a forward slash.');
     $this->assertSession()->fieldExists('display_configuration[path]')->setValue('/all-animals');
     $this->drupalPostForm(NULL, [], 'Save');
+    $this->assertSession()->pageTextContains('The entity browser Test entity browser has been updated.');
     $this->getSession()->executeScript("jQuery('details').attr('open', 'open');");
 
     // Test ajax update of display settings.
@@ -222,6 +226,7 @@ class ConfigurationTest extends WebDriverTestBase {
     // Use defaults and save to go to WidgetsConfig form.
     $this->drupalPostForm(NULL, [], 'Save');
     $this->assertSession()->addressEquals('/admin/config/content/entity_browser/test_entity_browser/widgets');
+    $this->assertSession()->pageTextContains('The entity browser Test entity browser has been added. Now you may configure the widgets you would like to use.');
     $widgetSelect = $this->assertSession()->selectExists('widget');
 
     $this->assertSession()->responseContains('The available plugins are:');
@@ -243,6 +248,7 @@ class ConfigurationTest extends WebDriverTestBase {
     $this->assertSession()->selectExists("table[$uuid][form][form_mode][form_select]");
     $this->drupalPostForm(NULL, [], 'Save');
     $this->assertSession()->addressEquals('/admin/config/content/entity_browser/test_entity_browser/widgets');
+    $this->assertSession()->pageTextContains('The entity browser Test entity browser has been updated.');
 
     $entity_browser = EntityBrowser::load('test_entity_browser');
     $widget = $entity_browser->getWidget($uuid);
@@ -273,6 +279,7 @@ class ConfigurationTest extends WebDriverTestBase {
     $this->assertSession()->selectExists("table[$uuid][form][view]")->selectOption('nodes_entity_browser.entity_browser_1');
     $this->drupalPostForm(NULL, [], 'Save');
     $this->assertSession()->addressEquals('/admin/config/content/entity_browser/test_entity_browser/widgets');
+    $this->assertSession()->pageTextContains('The entity browser Test entity browser has been updated.');
 
     $entity_browser = EntityBrowser::load('test_entity_browser');
     $widget = $entity_browser->getWidget($uuid);
@@ -305,6 +312,7 @@ class ConfigurationTest extends WebDriverTestBase {
     $this->assertSession()->elementExists('css', 'a.token-dialog.use-ajax');
     $this->drupalPostForm(NULL, [], 'Save');
     $this->assertSession()->addressEquals('/admin/config/content/entity_browser/test_entity_browser/widgets');
+    $this->assertSession()->pageTextContains('The entity browser Test entity browser has been updated.');
 
     $entity_browser = EntityBrowser::load('test_entity_browser');
     $widget = $entity_browser->getWidget($uuid);
