@@ -13,8 +13,6 @@ use Drupal\entity_browser\Element\EntityBrowserElement;
  */
 class FormElementTest extends FormBase {
 
-  use MessengerTrait;
-
   /**
    * {@inheritdoc}
    */
