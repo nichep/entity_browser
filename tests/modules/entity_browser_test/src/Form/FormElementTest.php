@@ -5,7 +5,6 @@ namespace Drupal\entity_browser_test\Form;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\entity_browser\Element\EntityBrowserElement;
 
 /**
