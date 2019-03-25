@@ -4,6 +4,7 @@ namespace Drupal\entity_browser\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\entity_browser\Element\EntityBrowserElement;
+use Drupal\entity_browser\Entity\EntityBrowser;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
@@ -248,7 +249,31 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
         ->settingsForm($form, $form_state);
     }
 
+    $element['#element_validate'] = [[get_class($this), 'validateSettingsForm']];
+
     return $element;
+  }
+
+  /**
+   * Validate the settings form.
+   */
+  public static function validateSettingsForm($element, FormStateInterface $form_state, $form) {
+
+    $values = NestedArray::getValue($form_state->getValues(), $element['#parents']);
+
+    if ($values['selection_mode'] == 'selection_edit') {
+      /** @var \Drupal\entity_browser\Entity\EntityBrowser $entity_browser */
+      $entity_browser = EntityBrowser::load($values['entity_browser']);
+      if ($entity_browser->getSelectionDisplay()->supportsPreselection() === FALSE) {
+        $tparams = [
+          '%selection_mode' => EntityBrowserElement::getSelectionModeOptions()[EntityBrowserElement::SELECTION_MODE_EDIT],
+          '@browser_link' => $entity_browser->toLink($entity_browser->label(), 'edit-form')->toString(),
+        ];
+        $form_state->setError($element['entity_browser']);
+        $form_state->setError($element['selection_mode'], t('The selection mode %selection_mode requires an entity browser with a selection display plugin that supports preselection.  Either change the selection mode or update the @browser_link entity browser to use a selection display plugin that supports preselection.', $tparams));
+      }
+
+    }
   }
 
   /**
