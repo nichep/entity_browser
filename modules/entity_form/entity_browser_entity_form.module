@@ -14,6 +14,7 @@ use Drupal\Core\Url;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\entity_browser\Element\EntityBrowserElement;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\inline_entity_form\Plugin\Field\FieldWidget\InlineEntityFormComplex;
 
 /**
  * Implements hook_inline_entity_form_reference_form_alter().
@@ -159,7 +160,7 @@ function entity_browser_entity_form_reference_form_submit(array $reference_form,
  * Implements hook_field_widget_third_party_settings_form().
  */
 function entity_browser_entity_form_field_widget_third_party_settings_form(WidgetInterface $plugin, FieldDefinitionInterface $field_definition, $form_mode, $form, FormStateInterface $form_state) {
-  if ($plugin->getPluginId() == 'inline_entity_form_complex') {
+  if ($plugin instanceof InlineEntityFormComplex) {
     $entity_browsers = \Drupal::service('entity_type.manager')->getStorage('entity_browser')->loadMultiple();
     if ($entity_browsers) {
       $options = [];
@@ -189,7 +190,7 @@ function entity_browser_entity_form_field_widget_third_party_settings_form(Widge
  */
 function entity_browser_entity_form_field_widget_settings_summary_alter(&$summary, $context) {
   $plugin = $context['widget'];
-  if ($plugin->getPluginId() == 'inline_entity_form_complex' && $plugin->getThirdPartySetting('entity_browser_entity_form', 'entity_browser_id') && $plugin->getThirdPartySetting('entity_browser_entity_form', 'entity_browser_id') !== '_none') {
+  if ($plugin instanceof InlineEntityFormComplex && $plugin->getThirdPartySetting('entity_browser_entity_form', 'entity_browser_id') && $plugin->getThirdPartySetting('entity_browser_entity_form', 'entity_browser_id') !== '_none') {
     $entity_browser_id = $plugin->getThirdPartySetting('entity_browser_entity_form', 'entity_browser_id');
     $entity_browser = \Drupal::service('entity_type.manager')->getStorage('entity_browser')->load($entity_browser_id);
     if ($entity_browser) {
