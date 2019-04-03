@@ -10,7 +10,7 @@ use Drupal\file\Entity\File;
  * @group entity_browser
  * @see \Drupal\entity_browser\Plugin\EntityBrowser\Widget\View
  */
-class EntityBrowserViewsWidgetTest extends EntityBrowserJavascriptTestBase {
+class EntityBrowserViewsWidgetTest extends EntityBrowserWebDriverTestBase {
 
   /**
    * Modules to enable.

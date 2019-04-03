@@ -14,7 +14,7 @@ use Drupal\node\Entity\Node;
  *
  * @group entity_browser
  */
-class ImageFieldTest extends EntityBrowserJavascriptTestBase {
+class ImageFieldTest extends EntityBrowserWebDriverTestBase {
 
   /**
    * Created file entity.
