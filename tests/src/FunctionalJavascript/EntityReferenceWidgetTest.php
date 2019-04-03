@@ -14,7 +14,7 @@ use Drupal\user\Entity\Role;
  *
  * @group entity_browser
  */
-class EntityReferenceWidgetTest extends EntityBrowserJavascriptTestBase {
+class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
 
   /**
    * {@inheritdoc}
