@@ -4,6 +4,7 @@ namespace Drupal\entity_browser\Form;
 
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigException;
+use Drupal\Core\Form\BaseFormIdInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface;
@@ -17,7 +18,7 @@ use Drupal\Core\Render\RendererInterface;
 /**
  * The entity browser form.
  */
-class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
+class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface, BaseFormIdInterface {
 
   /**
    * UUID generator service.
@@ -83,6 +84,13 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
    */
   public function getFormId() {
     return 'entity_browser_' . $this->entityBrowser->id() . '_form';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBaseFormId() {
+    return 'entity_browser_form';
   }
 
   /**
