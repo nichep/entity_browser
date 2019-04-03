@@ -174,4 +174,11 @@ abstract class EntityBrowserWebDriverTestBase extends WebDriverTestBase {
     return $image;
   }
 
+  /**
+   * Waits for jQuery to become ready and animations to complete.
+   */
+  protected function waitForAjaxToFinish() {
+    $this->assertSession()->assertWaitOnAjaxRequest();
+  }
+
 }

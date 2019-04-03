@@ -7,7 +7,7 @@ namespace Drupal\Tests\entity_browser\FunctionalJavascript;
  *
  * @group entity_browser
  */
-class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
+class EntityBrowserTest extends EntityBrowserWebDriverTestBase {
 
   /**
    * Tests single widget selector.
@@ -111,8 +111,11 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     $this->assertSession()->linkNotExists('dummy');
     $this->assertSession()->linkExists('view');
     $this->assertSession()->linkExists('upload');
-    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'eb_dummy');
 
+    // Commenting out header checks for now:
+    // Behat\Mink\Exception\UnsupportedDriverActionException: Response headers are not available
+    // from Drupal\FunctionalJavascriptTests\DrupalSelenium2Driver
+    // $this->assertHeader('X-Drupal-Cache-Contexts', 'eb_dummy');
     // Move dummy widget to the first place and make sure it does not appear.
     $browser = $this->container->get('entity_type.manager')
       ->getStorage('entity_browser')
@@ -124,7 +127,6 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     $this->assertSession()->linkExists('view');
     $this->assertSession()->linkExists('upload');
     $this->assertSession()->pageTextNotContains('This is dummy widget.');
-    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'eb_dummy');
   }
 
   /**
@@ -187,8 +189,6 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     $this->assertSession()->optionExists('widget', '2dc1ab07-2f8f-42c9-aab7-7eef7f8b7d87');
     // View.
     $this->assertSession()->optionExists('widget', '774798f1-5ec5-4b63-84bd-124cd51ec07d');
-    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'eb_dummy');
-
     // Move dummy widget to the first place and make sure it does not appear.
     $browser = $this->container->get('entity_type.manager')
       ->getStorage('entity_browser')
@@ -203,7 +203,6 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     // View.
     $this->assertSession()->optionExists('widget', '774798f1-5ec5-4b63-84bd-124cd51ec07d');
     $this->assertSession()->pageTextNotContains('This is dummy widget.');
-    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'eb_dummy');
   }
 
   /**
@@ -343,6 +342,7 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
 
     // Open the entity browser widget form.
     $this->getSession()->getPage()->clickLink('Select entities');
+    $this->waitForAjaxToFinish();
     $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
 
     // Check that only nodes of an allowed type are listed.

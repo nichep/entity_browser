@@ -11,7 +11,7 @@ use Behat\Mink\Element\NodeElement;
  *
  * @package Drupal\Tests\entity_browser\FunctionalJavascript
  */
-class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
+class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
 
   /**
    * {@inheritdoc}
@@ -257,7 +257,9 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
     $this->getSession()
       ->switchToIFrame('entity_browser_iframe_ief_entity_browser_file_modal');
 
-    $this->assertSession()->pageTextContains('Test entity browser file modal');
+    $this->assertSession()->waitForElementVisible('css', 'ief-entity-browser-file-modal-form');
+
+    $this->assertSession()->responseContains('Test entity browser file modal');
   }
 
   /**
@@ -273,6 +275,7 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
 
     $page->fillField('Title', 'Test IEF Title');
     $page->pressButton('Add existing node');
+    $this->assertSession()->assertWaitOnAjaxRequest();
     $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
 
     // Check that only nodes of an allowed type are listed.
@@ -296,6 +299,7 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
 
     $page->fillField('Title', 'Test IEF Title');
     $page->pressButton('Add existing node');
+    $this->assertSession()->assertWaitOnAjaxRequest();
     $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
 
     // Check that only nodes of an allowed type are listed.
