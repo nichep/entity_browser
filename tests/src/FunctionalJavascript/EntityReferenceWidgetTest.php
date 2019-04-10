@@ -82,7 +82,7 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
 
     // Create a dummy node that will be used as target.
     $target_node = Node::create([
-      'title' => 'Target example node 1',
+      'title' => 'Walrus',
       'type' => 'article',
     ]);
     $target_node->save();
@@ -102,10 +102,22 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
     $nid = reset($nid);
 
     $this->drupalGet('node/' . $nid . '/edit');
-    $assert_session->pageTextContains('Target example node 1');
+    $assert_session->pageTextContains('Walrus');
     // Make sure both "Edit" and "Remove" buttons are visible.
     $assert_session->buttonExists('edit-field-entity-reference1-current-items-0-remove-button');
-    $assert_session->buttonExists('edit-field-entity-reference1-current-items-0-edit-button');
+    $assert_session->buttonExists('edit-field-entity-reference1-current-items-0-edit-button')->press();
+
+    // Test edit dialog by changing title of referenced entity.
+    $edit_dialog = $this->assertSession()->waitForElement('xpath', '//div[contains(@id, "node-' . $target_node->id() . '-edit-dialog")]');
+    $title_field = $edit_dialog->findField('title[0][value]');
+    $title = $title_field->getValue();
+    $this->assertEquals('Walrus', $title);
+    $title_field->setValue('Alpaca');
+    $this->assertSession()->elementExists('css', '.ui-dialog-buttonset.form-actions .form-submit')->press();
+    $this->waitForAjaxToFinish();
+    // Check that new title is displayed.
+    $this->assertSession()->pageTextNotContains('Walrus');
+    $this->assertSession()->pageTextContains('Alpaca');
 
     // Test whether changing these definitions on the browser config effectively
     // change the visibility of the buttons.
@@ -153,7 +165,7 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
     // Test the "Remove" button on the widget works.
     $page->pressButton('Remove');
     $this->waitForAjaxToFinish();
-    $assert_session->pageTextNotContains('Target example node 1');
+    $assert_session->pageTextNotContains('Alpaca');
 
     // Test the "Replace" button functionality.
     $form_display->setComponent('field_entity_reference1', [
@@ -238,7 +250,7 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
     $session->wait(1000);
     $session->switchToIFrame();
     $this->waitForAjaxToFinish();
-    $assert_session->elementContains('css', '#edit-field-entity-reference1-wrapper', 'Target example node 1');
+    $assert_session->elementContains('css', '#edit-field-entity-reference1-wrapper', 'Alpaca');
     // All three buttons should be visible.
     $assert_session->elementExists('css', 'input[data-drupal-selector="edit-field-entity-reference1-current-items-0-remove-button"]');
     $assert_session->elementExists('css', 'input[data-drupal-selector="edit-field-entity-reference1-current-items-0-edit-button"]');
@@ -270,7 +282,7 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
     $session->wait(1000);
     $session->switchToIFrame();
     $this->waitForAjaxToFinish();
-    $assert_session->elementContains('css', '#edit-field-entity-reference1-wrapper', 'Target example node 1');
+    $assert_session->elementContains('css', '#edit-field-entity-reference1-wrapper', 'Alpaca');
     // All three buttons should be visible.
     $assert_session->elementExists('css', 'input[data-drupal-selector="edit-field-entity-reference1-current-items-0-remove-button"]');
     $assert_session->elementExists('css', 'input[data-drupal-selector="edit-field-entity-reference1-current-items-0-edit-button"]');
@@ -304,7 +316,6 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
     $session->switchToIFrame();
     $this->waitForAjaxToFinish();
     $assert_session->buttonNotExists('edit-field-entity-reference1-current-items-0-edit-button');
-
   }
 
 }
