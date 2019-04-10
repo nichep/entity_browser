@@ -614,6 +614,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
             'edit_button' => [
               '#type' => 'submit',
               '#value' => $this->t('Edit'),
+              '#name' => $this->fieldDefinition->getName() . '_edit_button_' . $entity->id() . '_' . $row_id . '_' . md5(json_encode($field_parents)),
               '#ajax' => [
                 'url' => Url::fromRoute(
                   'entity_browser.edit_form', [
