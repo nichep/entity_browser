@@ -173,17 +173,56 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       }
     }
 
-    $id = Html::getUniqueId('field-' . $this->fieldDefinition->getName() . '-display-settings-wrapper');
+    $id = Html::getId($this->fieldDefinition->getName()) . '-field-widget-display-settings-ajax-wrapper-' . md5($this->fieldDefinition->get('uuid'));
     $element['field_widget_display'] = [
       '#title' => $this->t('Entity display plugin'),
-      '#type' => 'select',
+      '#type' => 'radios',
       '#default_value' => $this->getSetting('field_widget_display'),
       '#options' => $displays,
       '#ajax' => [
-        'callback' => [$this, 'updateSettingsAjax'],
+        'callback' => [get_class($this), 'updateFieldWidgetDisplaySettings'],
         'wrapper' => $id,
       ],
+      '#limit_validation_errors' => [],
     ];
+
+    if ($this->getSetting('field_widget_display')) {
+      $element['field_widget_display_settings'] = [
+        '#type' => 'details',
+        '#title' => $this->t('Entity display plugin configuration'),
+        '#open' => TRUE,
+        '#prefix' => '<div id="' . $id . '">',
+        '#suffix' => '</div>',
+        '#tree' => TRUE,
+      ];
+
+      $element['field_widget_display_settings'] += $this->fieldDisplayManager
+        ->createInstance(
+          $form_state->getValue(
+            [
+              'fields',
+              $this->fieldDefinition->getName(),
+              'settings_edit_form',
+              'settings',
+              'field_widget_display',
+            ],
+            $this->getSetting('field_widget_display')
+          ),
+          $form_state->getValue(
+            [
+              'fields',
+              $this->fieldDefinition->getName(),
+              'settings_edit_form',
+              'settings',
+              'field_widget_display_settings',
+            ],
+            $this->getSetting('field_widget_display_settings')
+          ) + [
+            'entity_type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type'),
+          ]
+        )
+        ->settingsForm($form, $form_state);
+    }
 
     $edit_button_access = TRUE;
     if ($entity_type->id() == 'file') {
@@ -226,29 +265,6 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       '#default_value' => $this->getSetting('selection_mode'),
     ];
 
-    $element['field_widget_display_settings'] = [
-      '#type' => 'fieldset',
-      '#title' => $this->t('Entity display plugin configuration'),
-      '#tree' => TRUE,
-      '#prefix' => '<div id="' . $id . '">',
-      '#suffix' => '</div>',
-    ];
-
-    if ($this->getSetting('field_widget_display')) {
-      $element['field_widget_display_settings'] += $this->fieldDisplayManager
-        ->createInstance(
-          $form_state->getValue(
-            ['fields', $this->fieldDefinition->getName(), 'settings_edit_form', 'settings', 'field_widget_display'],
-            $this->getSetting('field_widget_display')
-          ),
-          $form_state->getValue(
-            ['fields', $this->fieldDefinition->getName(), 'settings_edit_form', 'settings', 'field_widget_display_settings'],
-            $this->getSetting('field_widget_display_settings')
-          ) + ['entity_type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')]
-        )
-        ->settingsForm($form, $form_state);
-    }
-
     $element['#element_validate'] = [[get_class($this), 'validateSettingsForm']];
 
     return $element;
@@ -272,15 +288,18 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
         $form_state->setError($element['entity_browser']);
         $form_state->setError($element['selection_mode'], t('The selection mode %selection_mode requires an entity browser with a selection display plugin that supports preselection.  Either change the selection mode or update the @browser_link entity browser to use a selection display plugin that supports preselection.', $tparams));
       }
-
     }
   }
 
   /**
    * Ajax callback that updates field widget display settings fieldset.
    */
-  public function updateSettingsAjax(array $form, FormStateInterface $form_state) {
-    return $form['fields'][$this->fieldDefinition->getName()]['plugin']['settings_edit_form']['settings']['field_widget_display_settings'];
+  public function updateFieldWidgetDisplaySettings(array $form, FormStateInterface $form_state) {
+    $array_parents = $form_state->getTriggeringElement()['#array_parents'];
+    $up_two_levels = array_slice($array_parents, 0, count($array_parents) - 2);
+    $settings_path = array_merge($up_two_levels, ['field_widget_display_settings']);
+    $settingsElement = NestedArray::getValue($form, $settings_path);
+    return $settingsElement;
   }
 
   /**
