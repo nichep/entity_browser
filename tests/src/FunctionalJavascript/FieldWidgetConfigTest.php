@@ -7,6 +7,7 @@ use Drupal\entity_browser\Entity\EntityBrowser;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
+use Drupal\entity_browser\Element\EntityBrowserElement;
 
 /**
  * Tests the config UI for adding and editing entity browsers.
@@ -59,6 +60,88 @@ class FieldWidgetConfigTest extends WebDriverTestBase {
     ]);
 
     $this->drupalLogin($this->adminUser);
+  }
+
+  /**
+   * Test ajax for display plugin setting.
+   */
+  public function testAjax() {
+
+    // Create an entity_reference field to test the widget.
+    $field_storage = FieldStorageConfig::create([
+      'field_name' => 'field_humperdinck',
+      'type' => 'entity_reference',
+      'entity_type' => 'node',
+      'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
+      'settings' => [
+        'target_type' => 'node',
+      ],
+    ]);
+    $field_storage->save();
+
+    $field = FieldConfig::create([
+      'field_name' => 'field_humperdinck',
+      'entity_type' => 'node',
+      'bundle' => 'article',
+      'label' => 'Prince of Florin',
+      'settings' => [
+        'handler' => 'default:node',
+        'handler_settings' => [
+          'target_bundles' => [
+            'article' => 'article',
+          ],
+        ],
+      ],
+    ]);
+    $field->save();
+
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display */
+    $form_display = $this->container->get('entity_type.manager')
+      ->getStorage('entity_form_display')
+      ->load('node.article.default');
+
+    $form_display->setComponent('field_humperdinck', [
+      'type' => 'entity_browser_entity_reference',
+      'settings' => [
+        'entity_browser' => 'test_entity_browser_iframe_node_view',
+        'open' => TRUE,
+        'field_widget_edit' => TRUE,
+        'field_widget_remove' => TRUE,
+        'field_widget_replace' => FALSE,
+        'selection_mode' => EntityBrowserElement::SELECTION_MODE_APPEND,
+        'field_widget_display' => 'label',
+        'field_widget_display_settings' => [],
+      ],
+    ])->save();
+
+    $this->drupalGet('/admin/structure/types/manage/article/form-display');
+
+    $this->assertSession()->waitforButton('field_humperdinck_settings_edit')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    $form_prefix = 'fields[field_humperdinck][settings_edit_form][settings]';
+
+    $display = $this->assertSession()->fieldExists($form_prefix . '[field_widget_display]');
+
+    $this->assertEquals('label', $display->getValue());
+
+    $details_selector = 'details[data-drupal-selector="edit-fields-field-humperdinck-settings-edit-form-settings-field-widget-display-settings"]';
+
+    // Test that switching display plugin returns appropriate plugin
+    // settings form.
+    $options = [
+      'rendered_entity' => 'Select view mode to be used when rendering entities.',
+      'label' => 'This plugin has no configuration options.',
+    ];
+
+    for ($i = 0; $i < 3; $i++) {
+      foreach ($options as $option => $target_text) {
+        $display->setValue($option);
+        $this->assertSession()->assertWaitOnAjaxRequest();
+        $this->assertSession()
+          ->elementContains('css', $details_selector, $target_text);
+      }
+    }
   }
 
   /**
