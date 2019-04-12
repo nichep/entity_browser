@@ -308,4 +308,48 @@ class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
     $this->assertSession()->pageTextContains('Darth');
   }
 
+  /**
+   * Tests entity_browser_entity_form_reference_form_validate.
+   */
+  public function testEntityFormReferenceFormValidate() {
+    $boxer = $this->createNode(['type' => 'shark', 'title' => 'Boxer']);
+    $napoleon = $this->createNode(['type' => 'jet', 'title' => 'Napoleon']);
+
+    $this->drupalGet('node/add/ief_content');
+    $page = $this->getSession()->getPage();
+
+    $page->fillField('Title', 'Test IEF Title');
+
+    // Select the same node twice.
+    for ($i = 0; $i < 2; $i++) {
+      $this->assertSession()->buttonExists('Add existing node')->press();
+      $this->assertSession()->assertWaitOnAjaxRequest();
+      $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
+      $this->assertSession()->fieldExists('entity_browser_select[node:' . $boxer->id() . ']')->check();
+      $this->assertSession()->buttonExists('Select entities')->press();
+      $this->assertSession()->assertWaitOnAjaxRequest();
+      $this->assertSession()->buttonExists('Use selected')->press();
+      $this->getSession()->switchToIFrame();
+      $this->assertSession()->assertWaitOnAjaxRequest();
+    }
+
+    $this->assertSession()->pageTextContains('The selected node has already been added.');
+
+    // Select a different node.
+    $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
+    $this->assertSession()->fieldExists('entity_browser_select[node:' . $napoleon->id() . ']')->check();
+    $this->assertSession()->buttonExists('Select entities')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->assertSession()->buttonExists('Use selected')->press();
+    $this->getSession()->switchToIFrame();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    $this->assertSession()->pageTextNotContains('The selected node has already been added.');
+
+    $ief_table = $this->assertSession()->elementExists('xpath', '//table[contains(@id, "ief-entity-table-edit-field-nodes-entities")]');
+    $table_text = $ief_table->getText();
+    $this->assertContains('Boxer', $table_text);
+    $this->assertContains('Napoleon', $table_text);
+  }
+
 }

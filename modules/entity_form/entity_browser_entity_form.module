@@ -103,8 +103,9 @@ function entity_browser_entity_form_reference_form_validate(array &$reference_fo
   if (!empty($attach_entities)) {
     foreach ($attach_entities as $attach_entity) {
       foreach ($form_state->get(['inline_entity_form', $ief_id, 'entities']) as $key => $value) {
-        if ($value['entity'] == $attach_entity) {
-          $form_state->setError($reference_form, t('The selected @label has already been added.', ['@label' => $labels['singular']]));
+        if ($value['entity']->getEntityTypeId() == $attach_entity->getEntityTypeId() && $value['entity']->id() == $attach_entity->id()) {
+          $form_state->setError($reference_form['entity_browser'], t('The selected @label has already been added.', ['@label' => $labels['singular']]));
+          $reference_form['entity_browser']['entity_ids']['#value'] = '';
         }
       }
     }
