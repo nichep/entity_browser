@@ -363,7 +363,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-    $entity_type = $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type');
+
     $entities = $this->formElementEntities($items, $element, $form_state);
 
     // Get correct ordered list of entity IDs.
@@ -558,12 +558,17 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    */
   protected function displayCurrentSelection($details_id, array $field_parents, array $entities) {
 
+    $target_entity_type = $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type');
+
     $field_widget_display = $this->fieldDisplayManager->createInstance(
       $this->getSetting('field_widget_display'),
       $this->getSetting('field_widget_display_settings') + ['entity_type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')]
     );
 
-    $classes = ['entities-list'];
+    $classes = [
+      'entities-list',
+      Html::cleanCssIdentifier("entity-type--$target_entity_type"),
+    ];
     if ($this->fieldDefinition->getFieldStorageDefinition()->getCardinality() != 1) {
       $classes[] = 'sortable';
     }
