@@ -310,8 +310,17 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
     $field_widget_display = $this->getSetting('field_widget_display');
 
     if (!empty($field_widget_display)) {
-      $plugin = $this->fieldDisplayManager->getDefinition($field_widget_display);
-      $summary[] = $this->t('Entity display: @name', ['@name' => $plugin['label']]);
+      $pluginDefinition = $this->fieldDisplayManager->getDefinition($field_widget_display);
+      $field_widget_display_settings = $this->getSetting('field_widget_display_settings');
+      $field_widget_display_settings += [
+        'entity_type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type'),
+      ];
+      $plugin = $this->fieldDisplayManager->createInstance($field_widget_display, $field_widget_display_settings);
+      $summary[] = $this->t('Entity display: @name', ['@name' => $pluginDefinition['label']]);
+      if ($field_widget_display == 'rendered_entity') {
+        $view_mode_label = $plugin->getViewModeLabel();
+        $summary[] = $this->t('View Mode: @view_mode', ['@view_mode' => $view_mode_label]);
+      }
     }
     return $summary;
   }
