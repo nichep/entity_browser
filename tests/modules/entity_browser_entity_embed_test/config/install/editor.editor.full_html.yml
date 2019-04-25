@@ -39,6 +39,7 @@ settings:
             - Table
             - HorizontalRule
             - jet_shark_embed
+            - bundle_filter_test
         -
           name: 'Block Formatting'
           items:

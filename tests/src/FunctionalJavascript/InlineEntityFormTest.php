@@ -40,6 +40,7 @@ class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
     'access ief_entity_browser_file entity browser pages',
     'access ief_entity_browser_file_modal entity browser pages',
     'access widget_context_default_value entity browser pages',
+    'access bundle_filter entity browser pages',
     'access content',
     'create ief_content content',
     'create shark content',
@@ -306,6 +307,94 @@ class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
     $this->assertSession()->pageTextNotContains('Luke');
     $this->assertSession()->pageTextNotContains('Leia');
     $this->assertSession()->pageTextContains('Darth');
+  }
+
+  /**
+   * Tests the ContextualBundle filter plugin with exposed option.
+   */
+  public function testContextualBundleExposed() {
+
+    $this->config('core.entity_form_display.node.ief_content.default')
+      ->set('content.field_nodes.third_party_settings.entity_browser_entity_form.entity_browser_id', 'bundle_filter')
+      ->save();
+
+    $this->config('entity_browser.browser.bundle_filter')
+      ->set('widgets.b882a89d-9ce4-4dfe-9802-62df93af232a.settings.view', 'bundle_filter_exposed')
+      ->save();
+
+    $this->createNode(['type' => 'shark', 'title' => 'Luke']);
+    $this->createNode(['type' => 'jet', 'title' => 'Leia']);
+    $this->createNode(['type' => 'ief_content', 'title' => 'Darth']);
+
+    $this->drupalGet('node/add/ief_content');
+    $page = $this->getSession()->getPage();
+
+    $page->fillField('Title', 'Test IEF Title');
+    $page->pressButton('Add existing node');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->getSession()->switchToIFrame('entity_browser_iframe_bundle_filter');
+
+    // Check that only nodes of an allowed type are listed.
+    $this->assertSession()->pageTextContains('Luke');
+    $this->assertSession()->pageTextContains('Leia');
+    $this->assertSession()->pageTextNotContains('Darth');
+
+    // Test exposed form type filter.
+    $this->assertSession()->selectExists('Type')->selectOption('jet');
+    $this->assertSession()->buttonExists('Apply')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    // Check that only nodes of the type selected in the exposed filter display.
+    $this->assertSession()->pageTextNotContains('Luke');
+    $this->assertSession()->pageTextContains('Leia');
+    $this->assertSession()->pageTextNotContains('Darth');
+
+    $this->assertSession()->selectExists('Type')->selectOption('shark');
+    $this->assertSession()->buttonExists('Apply')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    // Check that only nodes of the type selected in the exposed filter display.
+    $this->assertSession()->pageTextContains('Luke');
+    $this->assertSession()->pageTextNotContains('Leia');
+    $this->assertSession()->pageTextNotContains('Darth');
+
+    $this->assertSession()->selectExists('Type')->selectOption('All');
+    $this->assertSession()->buttonExists('Apply')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    // Check that only nodes of the type selected in the exposed filter display.
+    $this->assertSession()->pageTextContains('Luke');
+    $this->assertSession()->pageTextContains('Leia');
+    $this->assertSession()->pageTextNotContains('Darth');
+
+    /** @var \Drupal\Core\Field\FieldConfigInterface $field_config */
+    $field_config = $this->container->get('entity_type.manager')
+      ->getStorage('field_config')
+      ->load('node.ief_content.field_nodes');
+    $handler_settings = $field_config->getSetting('handler_settings');
+    $handler_settings['target_bundles'] = [
+      'ief_content' => 'ief_content',
+    ];
+    $field_config->setSetting('handler_settings', $handler_settings);
+    $field_config->save();
+
+    $this->drupalGet('node/add/ief_content');
+    $page = $this->getSession()->getPage();
+
+    $page->fillField('Title', 'Test IEF Title');
+    $page->pressButton('Add existing node');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->getSession()->switchToIFrame('entity_browser_iframe_bundle_filter');
+
+    // Check that only nodes of an allowed type are listed.
+    $this->assertSession()->pageTextNotContains('Luke');
+    $this->assertSession()->pageTextNotContains('Leia');
+    $this->assertSession()->pageTextContains('Darth');
+
+    // If there is just one target_bundle, the contextual filter
+    // should not be visible.
+    $this->assertSession()->fieldNotExists('Type');
+
   }
 
   /**
