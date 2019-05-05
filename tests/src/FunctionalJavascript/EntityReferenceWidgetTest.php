@@ -318,4 +318,220 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
     $assert_session->buttonNotExists('edit-field-entity-reference1-current-items-0-edit-button');
   }
 
+  /**
+   * Tests that drag and drop functions properly.
+   */
+  public function testDragAndDrop() {
+
+    $gatsby = $this->createNode(['type' => 'shark', 'title' => 'Gatsby']);
+    $daisy = $this->createNode(['type' => 'jet', 'title' => 'Daisy']);
+    $nick = $this->createNode(['type' => 'article', 'title' => 'Nick']);
+
+    $santa = $this->createNode(['type' => 'shark', 'title' => 'Santa Claus']);
+    $easter_bunny = $this->createNode(['type' => 'jet', 'title' => 'Easter Bunny']);
+    $pumpkin_king = $this->createNode(['type' => 'article', 'title' => 'Pumpkin King']);
+
+    $field1_storage_config = [
+      'field_name' => 'field_east_egg',
+      'type' => 'entity_reference',
+      'entity_type' => 'node',
+      'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
+      'settings' => [
+        'target_type' => 'node',
+      ],
+    ];
+
+    $field2_storage_config = [
+      'field_name' => 'field_east_egg2',
+    ] + $field1_storage_config;
+
+    $field_storage = FieldStorageConfig::create($field1_storage_config);
+    $field_storage->save();
+
+    $field_storage2 = FieldStorageConfig::create($field2_storage_config);
+    $field_storage2->save();
+
+    $field1_config = [
+      'field_name' => 'field_east_egg',
+      'entity_type' => 'node',
+      'bundle' => 'article',
+      'label' => 'East Eggers',
+      'settings' => [
+        'handler_settings' => [
+          'target_bundles' => [
+            'shark' => 'shark',
+            'jet' => 'jet',
+            'article' => 'article',
+          ],
+        ],
+      ],
+    ];
+
+    $field2_config = [
+      'field_name' => 'field_east_egg2',
+      'label' => 'Easter Eggs',
+    ] + $field1_config;
+
+    $field = FieldConfig::create($field1_config);
+    $field->save();
+
+    $field2 = FieldConfig::create($field2_config);
+    $field2->save();
+
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display */
+    $form_display = $this->container->get('entity_type.manager')
+      ->getStorage('entity_form_display')
+      ->load('node.article.default');
+
+    $form_display->removeComponent('field_reference');
+
+    $field_widget_config = [
+      'type' => 'entity_browser_entity_reference',
+      'settings' => [
+        'entity_browser' => 'widget_context_default_value',
+        'table_settings' => [
+          'status_column' => TRUE,
+          'bundle_column' => TRUE,
+          'label_column' => FALSE,
+        ],
+        'open' => FALSE,
+        'field_widget_edit' => TRUE,
+        'field_widget_remove' => TRUE,
+        'field_widget_replace' => FALSE,
+        'selection_mode' => EntityBrowserElement::SELECTION_MODE_APPEND,
+        'field_widget_display' => 'label',
+        'field_widget_display_settings' => [],
+      ],
+    ];
+
+    $form_display->setComponent('field_east_egg', $field_widget_config)->save();
+    $form_display->setComponent('field_east_egg2', $field_widget_config)->save();
+
+    // Set auto open to false on the entity browser.
+    $entity_browser = $this->container->get('entity_type.manager')
+      ->getStorage('entity_browser')
+      ->load('widget_context_default_value');
+
+    $display_configuration = $entity_browser->get('display_configuration');
+    $display_configuration['auto_open'] = FALSE;
+    $entity_browser->set('display_configuration', $display_configuration);
+    $entity_browser->save();
+
+    $account = $this->drupalCreateUser([
+      'access widget_context_default_value entity browser pages',
+      'create article content',
+      'access content',
+    ]);
+    $this->drupalLogin($account);
+
+    $this->drupalGet('node/add/article');
+
+    $this->assertSession()->elementExists('xpath', '(//summary)[1]')->click();
+
+    // Open the entity browser widget form.
+    $this->getSession()->getPage()->clickLink('Select entities');
+    $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
+
+    $page = $this->getSession()->getPage();
+
+    $page->checkField('edit-entity-browser-select-node' . $gatsby->id());
+    $page->checkField('edit-entity-browser-select-node' . $daisy->id());
+    $page->checkField('edit-entity-browser-select-node' . $nick->id());
+    $page->pressButton('Select entities');
+    $this->waitForAjaxToFinish();
+    $page->pressButton('Use selected');
+    $this->waitForAjaxToFinish();
+    $this->getSession()->switchToIFrame();
+    $this->waitForAjaxToFinish();
+
+    $correct_order = [
+      1 => 'Gatsby',
+      2 => 'Daisy',
+      3 => 'Nick',
+    ];
+    foreach ($correct_order as $key => $value) {
+      $this->assertSession()
+        ->elementContains('xpath', "(//div[contains(@class, 'item-container')])[" . $key . "]", $value);
+    }
+
+    // Close details 1.
+    $this->assertSession()->elementExists('xpath', '(//summary)[1]')->click();
+    // Open details 2.
+    $this->assertSession()->elementExists('xpath', '(//summary)[2]')->click();
+
+    // Open the entity browser widget form.
+    $this->assertSession()->elementExists('xpath', "(//a[contains(text(), 'Select entities')])[2]")->click();
+    $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
+
+    $page = $this->getSession()->getPage();
+
+    $page->checkField('edit-entity-browser-select-node' . $santa->id());
+    $page->checkField('edit-entity-browser-select-node' . $easter_bunny->id());
+    $page->checkField('edit-entity-browser-select-node' . $pumpkin_king->id());
+    $page->pressButton('Select entities');
+    $this->waitForAjaxToFinish();
+    $page->pressButton('Use selected');
+    $this->waitForAjaxToFinish();
+    $this->getSession()->switchToIFrame();
+    $this->waitForAjaxToFinish();
+
+    // Close details 2.
+    $this->assertSession()->elementExists('xpath', '(//summary)[2]')->click();
+    // Open details 1.
+    $this->assertSession()->elementExists('xpath', '(//summary)[1]')->click();
+
+    $first_item = $this->assertSession()->elementExists('xpath', "(//div[contains(@class, 'item-container')])[1]");
+    $this->dragDropElement($first_item, 160, 0);
+    $this->waitForAjaxToFinish();
+
+    $this->assertSession()->fieldExists('title[0][value]')->setValue('Hello World');
+
+    $this->assertSession()->buttonExists('Save')->press();
+
+    $this->drupalGet('node/7/edit');
+
+    $correct_order = [
+      1 => 'Daisy',
+      2 => 'Gatsby',
+      3 => 'Nick',
+      4 => 'Santa Claus',
+      5 => 'Easter Bunny',
+      6 => 'Pumpkin King',
+    ];
+    foreach ($correct_order as $key => $value) {
+      $this->assertSession()
+        ->elementContains('xpath', "(//div[contains(@class, 'item-container')])[" . $key . "]", $value);
+    }
+
+    $fourth = $this->assertSession()->elementExists('xpath', "(//div[contains(@class, 'item-container')])[4]");
+    $this->dragDropElement($fourth, 160, 0);
+
+    $correct_order = [
+      4 => 'Easter Bunny',
+      5 => 'Santa Claus',
+      6 => 'Pumpkin King',
+    ];
+    foreach ($correct_order as $key => $value) {
+      $this->assertSession()
+        ->elementContains('xpath', "(//div[contains(@class, 'item-container')])[" . $key . "]", $value);
+    }
+
+    // Test that order is preserved after removing item.
+    $this->assertSession()
+      ->elementExists('xpath', '(//input[contains(@class, "remove-button")])[5]')
+      ->press();
+
+    $this->waitForAjaxToFinish();
+
+    $correct_order = [
+      4 => 'Easter Bunny',
+      5 => 'Pumpkin King',
+    ];
+
+    foreach ($correct_order as $key => $value) {
+      $this->assertSession()
+        ->elementContains('xpath', "(//div[contains(@class, 'item-container')])[" . $key . "]", $value);
+    }
+  }
+
 }

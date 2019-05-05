@@ -534,7 +534,8 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       // Find and remove correct entity.
       $values = explode(' ', $form_state->getValue(array_merge($parents, ['target_id'])));
       foreach ($values as $index => $item) {
-        if ($item == $id && $index == $row_id) {
+        // @todo add weight field.
+        if ($item == $id) {
           array_splice($values, $index, 1);
 
           break;
@@ -767,7 +768,8 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
     $is_relevant_submit = FALSE;
     if (($trigger = $form_state->getTriggeringElement())) {
       // Can be triggered by hidden target_id element or "Remove" button.
-      if (end($trigger['#parents']) === 'target_id' || (end($trigger['#parents']) === 'remove_button')) {
+      $last_parent = end($trigger['#parents']);
+      if (in_array($last_parent, ['target_id', 'remove_button', 'replace_button'])) {
         $is_relevant_submit = TRUE;
 
         // In case there are more instances of this widget on the same page we
@@ -867,7 +869,11 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       [$this->fieldDefinition->getName(), 'target_id']
     );
 
-    if (!NestedArray::keyExists($form_state->getUserInput(), $target_id_element_path)) {
+    $user_input = $form_state->getUserInput();
+
+    $ief_submit = (!empty($user_input['_triggering_element_name']) && strpos($user_input['_triggering_element_name'], 'ief-edit-submit') === 0);
+
+    if (!$ief_submit || !NestedArray::keyExists($form_state->getUserInput(), $target_id_element_path)) {
       return FALSE;
     }
 
