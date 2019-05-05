@@ -8,6 +8,7 @@ use Drupal\file\Entity\File;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
+use Behat\Mink\Element\NodeElement;
 
 /**
  * Base class for Entity browser Javascript functional tests.
@@ -179,6 +180,47 @@ abstract class EntityBrowserWebDriverTestBase extends WebDriverTestBase {
    */
   protected function waitForAjaxToFinish() {
     $this->assertSession()->assertWaitOnAjaxRequest();
+  }
+
+  /**
+   * Drag element in document with defined offset position.
+   *
+   * @param \Behat\Mink\Element\NodeElement $element
+   *   Element that will be dragged.
+   * @param int $offsetX
+   *   Vertical offset for element drag in pixels.
+   * @param int $offsetY
+   *   Horizontal offset for element drag in pixels.
+   */
+  protected function dragDropElement(NodeElement $element, $offsetX, $offsetY) {
+
+    $elemXpath = $element->getXpath();
+
+    $jsCode = "var fireMouseEvent = function (type, element, x, y) {
+      var event = document.createEvent('MouseEvents');
+      event.initMouseEvent(type, true, (type !== 'mousemove'), window, 0, 0, 0, x, y, false, false, false, false, 0, element);
+      element.dispatchEvent(event); };";
+
+    // XPath provided by getXpath uses single quote (') to encapsulate strings,
+    // that's why xpath has to be quited with double quites in javascript code.
+    $jsCode .= "(function() {
+      var dragElement = document.evaluate(\"{$elemXpath}\", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+      var pos = dragElement.getBoundingClientRect();
+      var centerX = Math.floor((pos.left + pos.right) / 2);
+      var centerY = Math.floor((pos.top + pos.bottom) / 2);
+      fireMouseEvent('mousedown', dragElement, centerX, centerY);
+      var xOffset = {$offsetX};
+      var yOffset = {$offsetY};
+      var moves = 3;
+	    for (i = 0 ; i < moves ; i++ ) {
+			  centerX += xOffset / moves;
+			  centerY += yOffset / moves;
+		    fireMouseEvent('mousemove', dragElement, Math.round(centerX), Math.round(centerY));
+		  }
+      fireMouseEvent('mouseup', dragElement, centerX, centerY);
+    })();";
+
+    $this->getSession()->executeScript($jsCode);
   }
 
 }
