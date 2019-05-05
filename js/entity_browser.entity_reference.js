@@ -19,6 +19,23 @@
           stop: Drupal.entityBrowserEntityReference.entitiesReordered
         });
       });
+
+      $(context).find('.field--widget-entity-browser-entity-reference .remove-button').each(function () {
+        $(this).once('entity-browser-remove').on('mousedown', function(e) {
+          var $currentItems = $(this).parent().parent();
+          $(this).parent().remove();
+          Drupal.entityBrowserEntityReference.updateTargetId($currentItems);
+        })
+      });
+
+      $(context).find('.field--widget-entity-browser-file .remove-button').each(function () {
+        $(this).once('entity-browser-remove').on('mousedown', function(e) {
+          var $currentItems = $(this).closest('.entities-list');
+          $(this).closest('tr').remove();
+          Drupal.entityBrowserEntityReference.updateTargetId($currentItems);
+        })
+      });
+
       // The AJAX callback will give us a flag when we need to re-open the
       // browser, most likely due to a "Replace" button being clicked.
       if (typeof drupalSettings.entity_browser_reopen_browser !== 'undefined' &&  drupalSettings.entity_browser_reopen_browser) {
@@ -48,13 +65,24 @@
    *   Object with detailed information about the sort event.
    */
   Drupal.entityBrowserEntityReference.entitiesReordered = function (event, ui) {
-    var items = $(this).find('.item-container');
+    Drupal.entityBrowserEntityReference.updateTargetId($(this));
+  };
+
+  /**
+   * Updates the 'target_id' element.
+   *
+   * @param {object} $currentItems
+   *   Object with '.entities-list.sortable' element.
+   */
+  Drupal.entityBrowserEntityReference.updateTargetId = function ($currentItems) {
+    var items = $currentItems.find('.item-container');
     var ids = [];
     for (var i = 0; i < items.length; i++) {
       ids[i] = $(items[i]).attr('data-entity-id');
+      // If using weight field, update it.
+      $(items[i]).find('input[name*="[_weight]"]').val(i);
     }
-
-    $(this).parent().parent().find('input[type*=hidden][name*="[target_id]"]').val(ids.join(' '));
-  };
+    $currentItems.parent().find('input[type*=hidden][name*="[target_id]"]').val(ids.join(' '));
+  }
 
 }(jQuery, Drupal));
