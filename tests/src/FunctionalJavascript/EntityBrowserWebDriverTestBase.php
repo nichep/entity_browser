@@ -212,15 +212,42 @@ abstract class EntityBrowserWebDriverTestBase extends WebDriverTestBase {
       var xOffset = {$offsetX};
       var yOffset = {$offsetY};
       var moves = 3;
-	    for (i = 0 ; i < moves ; i++ ) {
-			  centerX += xOffset / moves;
-			  centerY += yOffset / moves;
-		    fireMouseEvent('mousemove', dragElement, Math.round(centerX), Math.round(centerY));
-		  }
+      for (i = 0 ; i < moves ; i++ ) {
+        centerX += xOffset / moves;
+        centerY += yOffset / moves;
+        fireMouseEvent('mousemove', dragElement, Math.round(centerX), Math.round(centerY));
+      }
       fireMouseEvent('mouseup', dragElement, centerX, centerY);
     })();";
 
     $this->getSession()->executeScript($jsCode);
+  }
+
+  /**
+   * Click the remove button for an .item-container at a given position.
+   *
+   * @param int $position
+   *   The xpath position of the item to remove.
+   */
+  protected function removeItemAtPosition($position) {
+    $this->assertSession()
+      ->elementExists('xpath', '(//input[contains(@class, "remove-button")])[' . $position . ']')
+      ->press();
+  }
+
+  /**
+   * Check the order of .item-container elements.
+   *
+   * @param array $expected
+   *   The expected order of .item-container elements.  Each key
+   *   represents the order using xpath.  Each value some text contained
+   *   within the item.
+   */
+  protected function assertItemOrder($expected) {
+    foreach ($expected as $key => $value) {
+      $this->assertSession()
+        ->elementContains('xpath', "(//*[contains(@class, 'item-container')])[" . $key . "]", $value);
+    }
   }
 
 }
