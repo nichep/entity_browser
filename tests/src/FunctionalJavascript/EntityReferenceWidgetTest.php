@@ -163,6 +163,7 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
 
     // Test the "Remove" button on the widget works.
     $this->assertSession()->buttonExists('Remove')->press();
+    $this->waitForAjaxToFinish();
     $this->assertSession()->pageTextNotContains('Alpaca');
 
     // Test the "Replace" button functionality.
