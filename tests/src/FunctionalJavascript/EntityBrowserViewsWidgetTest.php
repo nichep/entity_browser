@@ -39,14 +39,11 @@ class EntityBrowserViewsWidgetTest extends EntityBrowserWebDriverTestBase {
    * Tests Entity Browser views widget.
    */
   public function testViewsWidget() {
-    $current_user = \Drupal::currentUser();
-
     // Create a file so that our test View isn't empty.
     file_unmanaged_copy(\Drupal::root() . '/core/misc/druplicon.png', 'public://example.jpg');
     /** @var \Drupal\file\FileInterface $file */
     $file = File::create([
       'uri' => 'public://example.jpg',
-      'uid' => $current_user->id(),
     ]);
     $file->save();
 
