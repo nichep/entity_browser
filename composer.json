@@ -34,6 +34,7 @@
     "drupal/paragraphs": "~1.0",
     "drupal/media_entity": "~1.0",
     "drupal/embed": "~1.0",
-    "drupal/entity_embed": "~1.0"
+    "drupal/entity_embed": "~1.0",
+    "drupal/entityqueue": "~1.0"
   }
 }
