@@ -433,9 +433,9 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
     // Open the entity browser widget form.
     $this->getSession()->getPage()->clickLink('Select entities');
     $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
-    $this->assertSession()->fieldExists('entity_browser_select[node:' . $gatsby->id(). ']')->check();
-    $this->assertSession()->fieldExists('entity_browser_select[node:' . $daisy->id(). ']')->check();
-    $this->assertSession()->fieldExists('entity_browser_select[node:' . $nick->id(). ']')->check();
+    $this->assertSession()->fieldExists('entity_browser_select[node:' . $gatsby->id() . ']')->check();
+    $this->assertSession()->fieldExists('entity_browser_select[node:' . $daisy->id() . ']')->check();
+    $this->assertSession()->fieldExists('entity_browser_select[node:' . $nick->id() . ']')->check();
     $this->assertSession()->buttonExists('Select entities')->press();
     $this->waitForAjaxToFinish();
     $this->assertSession()->buttonExists('Use selected')->press();
@@ -462,9 +462,9 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
     $this->assertSession()->elementExists('xpath', "(//a[contains(text(), 'Select entities')])[2]")->click();
     $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
 
-    $this->assertSession()->fieldExists('entity_browser_select[node:' . $santa->id(). ']')->check();
-    $this->assertSession()->fieldExists('entity_browser_select[node:' . $easter_bunny->id(). ']')->check();
-    $this->assertSession()->fieldExists('entity_browser_select[node:' . $pumpkin_king->id(). ']')->check();
+    $this->assertSession()->fieldExists('entity_browser_select[node:' . $santa->id() . ']')->check();
+    $this->assertSession()->fieldExists('entity_browser_select[node:' . $easter_bunny->id() . ']')->check();
+    $this->assertSession()->fieldExists('entity_browser_select[node:' . $pumpkin_king->id() . ']')->check();
     $this->assertSession()->buttonExists('Select entities')->press();
     $this->waitForAjaxToFinish();
     $this->assertSession()->buttonExists('Use selected')->press();
