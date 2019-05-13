@@ -49,7 +49,7 @@ class ImageFieldTest extends EntityBrowserWebDriverTestBase {
       ],
     ])->save();
 
-    file_unmanaged_copy(\Drupal::root() . '/core/modules/simpletest/files/image-test.jpg', 'public://example.jpg');
+    \Drupal::service('file_system')->copy(\Drupal::root() . '/core/modules/simpletest/files/image-test.jpg', 'public://example.jpg');
     $this->image = File::create([
       'uri' => 'public://example.jpg',
     ]);
@@ -152,7 +152,7 @@ class ImageFieldTest extends EntityBrowserWebDriverTestBase {
     $this->assertSession()->linkExists('Select entities');
 
     // Test the Replace functionality.
-    file_unmanaged_copy(\Drupal::root() . '/core/modules/simpletest/files/image-test.jpg', 'public://example2.jpg');
+    \Drupal::service('file_system')->copy(\Drupal::root() . '/core/modules/simpletest/files/image-test.jpg', 'public://example2.jpg');
     $image2 = File::create(['uri' => 'public://example2.jpg']);
     $image2->save();
     \Drupal::service('file.usage')->add($image2, 'entity_browser', 'test', '1');

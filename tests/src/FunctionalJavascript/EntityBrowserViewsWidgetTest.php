@@ -40,7 +40,7 @@ class EntityBrowserViewsWidgetTest extends EntityBrowserWebDriverTestBase {
    */
   public function testViewsWidget() {
     // Create a file so that our test View isn't empty.
-    file_unmanaged_copy(\Drupal::root() . '/core/misc/druplicon.png', 'public://example.jpg');
+    \Drupal::service('file_system')->copy(\Drupal::root() . '/core/misc/druplicon.png', 'public://example.jpg');
     /** @var \Drupal\file\FileInterface $file */
     $file = File::create([
       'uri' => 'public://example.jpg',
@@ -72,7 +72,7 @@ class EntityBrowserViewsWidgetTest extends EntityBrowserWebDriverTestBase {
     $this->assertSession()->pageTextContains($file->getFilename());
 
     // Create another file to test bulk select form.
-    file_unmanaged_copy(\Drupal::root() . '/core/misc/druplicon.png', 'public://example_1.jpg');
+    \Drupal::service('file_system')->copy(\Drupal::root() . '/core/misc/druplicon.png', 'public://example_1.jpg');
     /** @var \Drupal\file\FileInterface $file */
     $new_file = File::create([
       'uri' => 'public://example_1.jpg',
