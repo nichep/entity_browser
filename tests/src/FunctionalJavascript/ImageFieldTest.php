@@ -120,13 +120,17 @@ class ImageFieldTest extends EntityBrowserWebDriverTestBase {
     $this->getSession()->switchToIFrame('entity_browser_iframe_test_entity_browser_iframe_view');
     $this->getSession()->getPage()->checkField('entity_browser_select[file:' . $this->image->id() . ']');
     $this->getSession()->getPage()->pressButton('Select entities');
-    $this->getSession()->getPage()->pressButton('Use selected');
+    $this->waitForAjaxToFinish();
+    $button = $this->assertSession()->waitForButton('Use selected');
     $this->assertSession()->pageTextContains('example.jpg');
+    $button->press();
+
     // Switch back to the main page.
     $this->getSession()->switchToIFrame();
     $this->waitForAjaxToFinish();
     // Check if the image thumbnail exists.
-    $this->assertSession()->elementExists('xpath', '//*[@data-drupal-selector="edit-field-image-current-' . $this->image->id() . '-display"]');
+    $this->assertSession()
+      ->waitForElementVisible('xpath', '//tr[@data-drupal-selector="edit-field-image-current-1"]');
     // Test if the image filename is present.
     $this->assertSession()->pageTextContains('example.jpg');
     // Test specifying Alt and Title texts and saving the node.
@@ -206,8 +210,11 @@ class ImageFieldTest extends EntityBrowserWebDriverTestBase {
     $this->getSession()->getPage()->attachFileToField('files[upload][]', $file_just_right);
     $this->waitForAjaxToFinish();
     $this->getSession()->getPage()->pressButton('Select files');
-    $this->getSession()->getPage()->pressButton('Use selected');
+    $this->waitForAjaxToFinish();
+    $button = $this->assertSession()->waitForButton('Use selected');
     $this->assertSession()->pageTextContains('image-test.jpg');
+    $button->press();
+    $this->waitForAjaxToFinish();
     // Check that the file has uploaded to the correct sub-directory.
     $this->getSession()->switchToIFrame();
     $this->waitForAjaxToFinish();
