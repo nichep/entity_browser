@@ -21,9 +21,9 @@
     }
   ],
   "support": {
-    "issues": "http://drupal.org/project/issues/entity_browser",
+    "issues": "https://www.drupal.org/project/issues/entity_browser",
     "irc": "irc://irc.freenode.org/drupal-contribute",
-    "source": "http://cgit.drupalcode.org/entity_browser"
+    "source": "https://git.drupalcode.org/project/entity_browser"
   },
   "license": "GPL-2.0+",
   "minimum-stability": "dev",
