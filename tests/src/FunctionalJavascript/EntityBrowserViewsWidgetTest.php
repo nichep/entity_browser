@@ -107,7 +107,7 @@ class EntityBrowserViewsWidgetTest extends EntityBrowserWebDriverTestBase {
     $this->getSession()->getPage()->fillField('entity_browser_select[file:2]', TRUE);
     $this->getSession()->getPage()->pressButton('Select entities');
 
-    $this->assertSession()->pageTextContains('You can not select more than 1 entity.');
+    $this->assertSession()->pageTextContains('You can only select one item.');
     $this->assertSession()->checkboxNotChecked('entity_browser_select[file:1]');
     $this->assertSession()->checkboxNotChecked('entity_browser_select[file:2]');
   }

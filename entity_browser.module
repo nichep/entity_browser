@@ -177,21 +177,22 @@ function entity_browser_form_entity_embed_dialog_alter(&$form, FormStateInterfac
   // Add contextual information to entity browser's widget context array.
   if (!empty($form['entity_browser']['#entity_browser'])) {
     $embed_button = $form_state->get('embed_button');
-    $form['entity_browser']['#widget_context']['embed_button_id'] = $embed_button->id();
-
-    if (empty($form['entity_browser']['#widget_context'])) {
-      $form['entity_browser']['#widget_context'] = [];
-    }
-
     $type_settings = $embed_button->getTypeSettings();
 
+    // Cardinality is always 1 with entity embed.
+    $context = [
+      'embed_button_id' => $embed_button->id(),
+      'cardinality' => 1,
+    ];
+
     if (!empty($type_settings['entity_type'])) {
-      $form['entity_browser']['#widget_context']['target_entity_type'] = $type_settings['entity_type'];
+      $context['target_entity_type'] = $type_settings['entity_type'];
+    }
+    if (!empty($type_settings['bundles'])) {
+      $context['target_bundles'] = $type_settings['bundles'];
     }
 
-    if (!empty($type_settings['bundles'])) {
-      $form['entity_browser']['#widget_context']['target_bundles'] = $type_settings['bundles'];
-    }
+    $form['entity_browser']['#widget_context'] = $context;
   }
 }
 
