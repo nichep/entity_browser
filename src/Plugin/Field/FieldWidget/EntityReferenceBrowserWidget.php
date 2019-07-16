@@ -691,6 +691,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       'widget_context' => [
         'target_bundles' => !empty($handler['target_bundles']) ? $handler['target_bundles'] : [],
         'target_entity_type' => $settings['target_type'],
+        'cardinality' => $this->fieldDefinition->getFieldStorageDefinition()->getCardinality(),
       ],
     ];
   }
