@@ -4,7 +4,7 @@ description: 'Test Entity Embed Integration'
 core: 8.x
 package: Testing
 dependencies:
-  - drupal:media (>= 8.4)
+  - media_entity:media_entity
   - drupal:ckeditor
   - drupal:node
   - drupal:views

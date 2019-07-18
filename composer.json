@@ -32,6 +32,7 @@
     "drupal/token": "~1.0",
     "drupal/inline_entity_form": "~1.0",
     "drupal/paragraphs": "~1.0",
+    "drupal/entity": "~1.0",
     "drupal/media_entity": "~1.0",
     "drupal/embed": "~1.0",
     "drupal/entity_embed": "~1.0",
