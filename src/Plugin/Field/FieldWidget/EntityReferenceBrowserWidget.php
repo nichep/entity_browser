@@ -294,7 +294,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
   /**
    * Ajax callback that updates field widget display settings fieldset.
    */
-  public function updateFieldWidgetDisplaySettings(array $form, FormStateInterface $form_state) {
+  public static function updateFieldWidgetDisplaySettings(array $form, FormStateInterface $form_state) {
     $array_parents = $form_state->getTriggeringElement()['#array_parents'];
     $up_two_levels = array_slice($array_parents, 0, count($array_parents) - 2);
     $settings_path = array_merge($up_two_levels, ['field_widget_display_settings']);
