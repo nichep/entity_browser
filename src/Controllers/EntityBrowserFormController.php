@@ -72,7 +72,7 @@ class EntityBrowserFormController extends HtmlFormController implements Containe
       $container->get('form_builder'),
       $container->get('class_resolver'),
       $container->get('current_route_match'),
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('request_stack')->getCurrentRequest()
     );
   }
