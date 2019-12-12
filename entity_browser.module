@@ -83,6 +83,7 @@ function entity_browser_form_alter(&$form, FormStateInterface &$form_state) {
           'details_id' => \Drupal::request()->query->get('details_id'),
         ],
       ],
+      'disable-refocus' => TRUE,
     ];
   }
 }
