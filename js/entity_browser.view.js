@@ -19,8 +19,7 @@
       // views-related ID, which ours does not.
       var views_instance = Drupal.views.instances[Object.keys(Drupal.views.instances)[0]];
       if (views_instance) {
-        // Initialize the exposed form AJAX.
-        views_instance.$exposed_form = $('div#views-exposed-form-' + views_instance.settings.view_name.replace(/_/g, '-') + '-' + views_instance.settings.view_display_id.replace(/_/g, '-'));
+        views_instance.$exposed_form = $('.js-view-dom-id-' + views_instance.settings.view_dom_id + ' .views-exposed-form');
         views_instance.$exposed_form.once('exposed-form').each(jQuery.proxy(views_instance.attachExposedFormAjax, views_instance));
 
         // The form values form_id, form_token, and form_build_id will break
