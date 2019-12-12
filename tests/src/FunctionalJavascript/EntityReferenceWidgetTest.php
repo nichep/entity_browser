@@ -28,6 +28,7 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
       'access test_entity_browser_iframe_node_view entity browser pages',
       'bypass node access',
       'administer node form display',
+      'access contextual links',
     ]);
 
   }
@@ -72,8 +73,10 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
         'field_widget_remove' => TRUE,
         'field_widget_replace' => FALSE,
         'selection_mode' => EntityBrowserElement::SELECTION_MODE_APPEND,
-        'field_widget_display' => 'label',
-        'field_widget_display_settings' => [],
+        'field_widget_display' => 'rendered_entity',
+        'field_widget_display_settings' => [
+          'view_mode' => 'teaser',
+        ],
       ],
     ])->save();
 
@@ -103,6 +106,8 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
     // Make sure both "Edit" and "Remove" buttons are visible.
     $this->assertSession()->buttonExists('edit-field-entity-reference1-current-items-0-remove-button');
     $this->assertSession()->buttonExists('edit-field-entity-reference1-current-items-0-edit-button')->press();
+    // Make sure the contextual links are not present.
+    $this->assertSession()->elementNotExists('css', '.contextual-links');
 
     // Test edit dialog by changing title of referenced entity.
     $edit_dialog = $this->assertSession()->waitForElement('xpath', '//div[contains(@id, "node-' . $target_node->id() . '-edit-dialog")]');

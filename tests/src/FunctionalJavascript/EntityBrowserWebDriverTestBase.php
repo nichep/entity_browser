@@ -24,6 +24,7 @@ abstract class EntityBrowserWebDriverTestBase extends WebDriverTestBase {
    */
   public static $modules = [
     'entity_browser_test',
+    'contextual',
     'views',
     'block',
     'node',
