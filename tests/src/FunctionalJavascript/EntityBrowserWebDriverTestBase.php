@@ -9,6 +9,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 use Behat\Mink\Element\NodeElement;
+use Drupal\language\Entity\ConfigurableLanguage;
 
 /**
  * Base class for Entity browser Javascript functional tests.
@@ -33,6 +34,7 @@ abstract class EntityBrowserWebDriverTestBase extends WebDriverTestBase {
     'field_ui',
     'views_ui',
     'system',
+    'language',
   ];
 
   /**
@@ -83,6 +85,8 @@ abstract class EntityBrowserWebDriverTestBase extends WebDriverTestBase {
         'open' => TRUE,
       ],
     ])->save();
+
+    ConfigurableLanguage::createFromLangcode('fr')->save();
 
     $account = $this->drupalCreateUser(static::$userPermissions);
     $this->drupalLogin($account);
