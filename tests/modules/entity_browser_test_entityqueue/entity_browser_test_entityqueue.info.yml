@@ -1,7 +1,7 @@
 name: 'Entity browser entityqueue integration test'
 type: module
 description: 'Support module for Entity browser entityqueue integration test.'
-core: 8.x
+core_version_requirement: ^8.7.7 || ^9
 package: Testing
 dependencies:
   - drupal:node
