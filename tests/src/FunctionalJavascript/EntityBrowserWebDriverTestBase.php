@@ -19,6 +19,11 @@ use Drupal\language\Entity\ConfigurableLanguage;
 abstract class EntityBrowserWebDriverTestBase extends WebDriverTestBase {
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Modules to enable.
    *
    * @var array
