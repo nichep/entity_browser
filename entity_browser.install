@@ -15,7 +15,7 @@ function entity_browser_requirements($phase) {
   // media_entity 1.x enabled.
   $incompatible = FALSE;
   $drupal_version = explode('.', \Drupal::VERSION);
-  if ($drupal_version[1] < 4) {
+  if ($drupal_version[0] === 8 && $drupal_version[1] < 4) {
     $incompatible = TRUE;
   }
   elseif (\Drupal::moduleHandler()->moduleExists('media_entity')) {
