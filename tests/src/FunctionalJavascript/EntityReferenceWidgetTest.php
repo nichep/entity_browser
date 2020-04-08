@@ -102,7 +102,7 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
     $this->assertSession()->buttonExists('Save')->press();
 
     $this->assertSession()->pageTextContains('Article Referencing node 1 has been created.');
-    $nid = $this->container->get('entity.query')->get('node')->condition('title', 'Referencing node 1')->execute();
+    $nid = \Drupal::entityQuery('node')->condition('title', 'Referencing node 1')->execute();
     $nid = reset($nid);
 
     // Assert correct translation appears.
