@@ -128,7 +128,7 @@ class EntityBrowserTest extends KernelTestBase {
         $this->fail('An entity browser without required ' . $plugin_type . ' created with no exception thrown.');
       }
       catch (PluginException $e) {
-        $this->assertContains('The "" plugin does not exist.', $e->getMessage(), 'An exception was thrown when an entity_browser was created without a ' . $plugin_type . ' plugin.');
+        $this->assertStringContainsString('The "" plugin does not exist.', $e->getMessage(), 'An exception was thrown when an entity_browser was created without a ' . $plugin_type . ' plugin.');
       }
     }
 
