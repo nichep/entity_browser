@@ -459,8 +459,11 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    * Render API callback: Processes the entity browser element.
    */
   public static function processEntityBrowser(&$element, FormStateInterface $form_state, &$complete_form) {
-    $uuid = key($element['#attached']['drupalSettings']['entity_browser']);
-    $element['#attached']['drupalSettings']['entity_browser'][$uuid]['selector'] = '#' . $element['#custom_hidden_id'];
+      $info = $element['#attached']['drupalSettings']['entity_browser'] ?? false;
+      if ($info) {
+          $uuid = key($element['#attached']['drupalSettings']['entity_browser']);
+          $element['#attached']['drupalSettings']['entity_browser'][$uuid]['selector'] = '#' . $element['#custom_hidden_id'];
+      }
     return $element;
   }
 
